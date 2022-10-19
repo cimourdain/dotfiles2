@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export PACKAGECLOUD_TOKEN=$(echo $(berglas access sm://ma-dev2/packagecloud-token#1))
+source ~/MA/MA-Infra/tools/gssh/gssh.sh

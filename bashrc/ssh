@@ -1,0 +1,4 @@
+#!/bin/bash
+
+eval "$(ssh-agent)" &> /dev/null
+ssh-add -k ~/.ssh/id_rsa &> /dev/null

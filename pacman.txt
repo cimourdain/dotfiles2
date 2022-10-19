@@ -1,0 +1,42 @@
+# DEV
+## tools
+alacritty
+bash-completion
+docker
+docker-compose
+firefox-developer-edition
+http-toolkit
+insomnia
+k9s
+starship-bin
+tmux
+kubectl
+kubectx
+postgresql
+zeal-git
+zsh
+
+
+## languages
+go
+python
+pyenv
+rust
+
+## IDE
+code
+phpstorm
+pycharm-professional
+vim
+
+
+# Graphics
+krita
+shutter
+
+# Communication
+slack-desktop
+
+# MA
+google-cloud-sdk
+berglas-bin

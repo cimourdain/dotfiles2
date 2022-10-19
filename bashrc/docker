@@ -1,0 +1,17 @@
+#!/bin/bash
+
+function destop {
+	docker stop $(docker ps -a -q)
+	docker rm $(docker ps -a -q)
+}
+
+function dip {
+	docker inspect --format='{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq)
+}
+
+function dprune {
+	destop
+	docker system prune
+	docker volume prune
+	docker network prune
+}

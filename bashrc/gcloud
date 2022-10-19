@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# prevent using python 3.10
+export CLOUDSDK_PYTHON=/usr/bin/python3.9
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/cheddar/gcloud/google-cloud-sdk/path.bash.inc' ]; then . '/home/cheddar/gcloud/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/cheddar/gcloud/google-cloud-sdk/completion.bash.inc' ]; then . '/home/cheddar/gcloud/google-cloud-sdk/completion.bash.inc'; fi

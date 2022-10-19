@@ -1,0 +1,38 @@
+[user]
+signingkey = 4ED60D8B2BBA2C2154796C8D3C1F22094E73E96C
+name = Gabriel Oger
+email = gabriel.oger@gmail.com
+
+[commit]
+gpgsign = true
+
+[core]
+editor = vim
+pager = less
+excludesfile = ~/.gitignore_global
+
+[alias]
+lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+co = checkout
+cob = checkout -b
+st = status
+aa = add .
+cm = commit -m
+cma = commit --amend --no-edit
+pso = !git push origin $(git rev-parse --abbrev-ref HEAD)
+plo = !git pull origin $(git rev-parse --abbrev-ref HEAD)
+pushf = !git pso --force-with-lease
+rst = !git reset --hard && git clean -f -d
+
+
+[color]
+ui = auto
+
+[fetch]
+prune = true
+
+[rebase]
+autosquash = true
+
+[pull]
+  rebase = true
