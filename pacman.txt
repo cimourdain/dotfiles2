@@ -28,6 +28,9 @@ python
 pyenv
 rust
 
+### required for Gcloud
+python39
+
 ## IDE
 code
 phpstorm
