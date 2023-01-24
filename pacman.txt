@@ -16,6 +16,11 @@ postgresql
 zeal-git
 zsh
 
+### enable share screen in GMeet/firefox
+xdg-desktop-portal
+xdg-desktop-portal-gnome
+xdg-desktop-portal-gtk
+
 
 ## languages
 go

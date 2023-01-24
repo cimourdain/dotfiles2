@@ -76,18 +76,26 @@ function restore_bashrc {
 ################
 function restore_git {
     if [[ -f ${HOME}/.gitignore_global ]];then
-        if [[ ! -L ${HOME}/.gitignore_global ]];then
-            mv ${HOME}/.gitignore_global ${HOME}/.gitignore_global.bak
-        fi
+        echo "backup existing gitignore_global"
+        mv ${HOME}/.gitignore_global ${HOME}/.gitignore_global.bak
+    elif [[ -L ${HOME}/.gitignore_global ]];then
+        echo  "delete existing gitignore_global symbolic link"
+        rm ${HOME}/.gitignore_global
+    else
+        echo "no existing file ${HOME}/.gitignore_global"
     fi
 
     if [[ -f ${HOME}/.gitconfig ]];then
-        if [[ ! -L ${HOME}/.gitconfig ]];then
-            mv ${HOME}/.gitconfig ${HOME}/.gitconfig.bak
-        fi
+        echo "backup existing gitconfig"
+        mv ${HOME}/.gitconfig ${HOME}/.gitconfig.bak
+    elif [[ -L ${HOME}/.gitconfig ]];then
+        echo  "delete existing gitconfig symbolic link"
+        rm ${HOME}/.gitconfig
+    else
+        echo "no existing file ${HOME}/.gitconfig"
     fi
 
-    echo "git config symlinks"
+    echo "create new symlinks to current dotfiles"
     ln -s ${PWD}/gitfiles/.gitignore_global ${HOME}
     ln -s ${PWD}/gitfiles/.gitconfig ${HOME}
 }
