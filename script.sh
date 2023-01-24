@@ -105,10 +105,11 @@ function restore_git {
 ################
 function restore_docker {
     echo "enable docker to current user"
+    local groupname="docker"
     # Create the docker group if it does not exist
-    sudo groupadd docker
+    getent group "${groupname}" || groupadd "${groupname}"
     # Add your user to the docker group.
-    sudo usermod -aG docker $USER
+    sudo usermod -aG "${groupname}" $USER
     # Log in to the new docker group (to avoid having to log out / log in again)
     newgrp docker
 }
