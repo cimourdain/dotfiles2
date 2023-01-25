@@ -22,6 +22,13 @@ After restore init applications
 ```
 
 
+# Theme
+- Gnome Shell:
+    - In Extensions app: install User Themes
+    - Set theme in User Themes settings
+- Legacy apps theme:
+    - In Gnome-Tewaks: set theme for legacy applications
+
 # MA
 
 ## Wifi

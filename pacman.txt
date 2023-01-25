@@ -1,6 +1,15 @@
 # System
 octopi
 
+# Gnome
+firefox-extension-gnome-shell-integration
+
+# Theme
+catppuccin-gtk-theme-macchiato
+
+# fonts
+noto-fonts-emoji
+
 # DEV
 ## tools
 alacritty
@@ -8,10 +17,10 @@ bash-completion
 docker
 docker-compose
 firefox-developer-edition
-http-toolkit
+httptoolkit
 insomnia
 k9s
-starship-bin
+starship
 tmux
 kubectl
 kubectx

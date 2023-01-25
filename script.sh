@@ -18,12 +18,12 @@ function backup_gpg {
 
 function restore_gpg {
     gpg_files_path="${BACKUP_FOLDER}gpg/"
-    if [[ -f ${gpg_files_path}public.gpg && -f ${gpg_files_path}private.gpg ]]; then
+    if [[ -f ${gpg_files_path}public.key && -f ${gpg_files_path}private.key ]]; then
         echo "restore GPG keys"
-        gpg --import "${BACKUP_FOLDER}gpg/public.gpg"
-        gpg --import "${BACKUP_FOLDER}gpg/private.gpg"
-        if [[-f ${gpg_files_path}trust.gpg  ]];then
-            gpg --import-ownertrust "${BACKUP_FOLDER}gpg/trust.gpg"
+        gpg --import "${BACKUP_FOLDER}gpg/public.key"
+        gpg --import "${BACKUP_FOLDER}gpg/private.key"
+        if [[ -f ${gpg_files_path}trust.key  ]];then
+            gpg --import-ownertrust "${BACKUP_FOLDER}gpg/trust.key"
         else
             echo "WARNING: no gpg trust file found in ${gpg_files_path}"
         fi
@@ -48,6 +48,7 @@ function backup_ssh {
 function restore_ssh {
     ssh_files_path="${BACKUP_FOLDER}ssh/"
     ssh_folder=${HOME}/.ssh
+    mkdir -p ${ssh_folder}
     cp -r ${ssh_files_path}* ${ssh_folder}
     chmod 700 ${ssh_folder}
     chmod 644 ${ssh_folder}/config
@@ -105,13 +106,19 @@ function restore_git {
 ################
 function restore_docker {
     echo "enable docker to current user"
-    local groupname="docker"
-    # Create the docker group if it does not exist
-    getent group "${groupname}" || groupadd "${groupname}"
-    # Add your user to the docker group.
-    sudo usermod -aG "${groupname}" $USER
-    # Log in to the new docker group (to avoid having to log out / log in again)
+    echo "Create the docker group if it does not exist"
+    sudo groupadd docker
+    echo "Add your user to the docker group."
+    sudo usermod -aG docker $USER
+    echo "check that user is in group"
+    groups ${USER}
+    
+    echo "Log in to the new docker group (to avoid having to log out / log in again)"
     newgrp docker
+    sudo su ${USER}
+    echo "Enable and start docker"
+    sudo systemctl enable docker
+    echo "!! restart required"
 }
 
 
@@ -119,12 +126,12 @@ function restore_docker {
 # SYSTEM
 ################
 function restore_system {
-    echo "update arch mirror list"
-    sudo reflector --save /etc/pacman.d/mirrorlist --country France,Germany,Finland,Netherland --protocol https --latest 10
+    # echo "update arch mirror list"
+    # sudo reflector --save /etc/pacman.d/mirrorlist --country France,Germany,Belgium,Netherland --protocol https --latest 10
 
     echo "restore installed packages"
-    pacman -Syyu
-    pacman --noconfirm -Sy $(grep -Ev ^'(#|$)' "${PWD}/pacman.txt")
+    yay -Syyu
+    yay --noconfirm -Sy $(grep -Ev ^'(#|$)' "${PWD}/pacman.txt")
 }
 
 
@@ -161,6 +168,8 @@ function restore {
     restore_git
     restore_gpg
     restore_ssh
+    restore_docker
+    restore_startup_services
 }
 
 
