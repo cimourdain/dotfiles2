@@ -44,7 +44,7 @@ rust
 python39
 
 ## IDE
-code
+visual-studio-code-bin
 phpstorm
 pycharm-professional
 vim
