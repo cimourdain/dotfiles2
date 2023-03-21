@@ -97,6 +97,8 @@ source "${current_dir}/ssh"
 source "${current_dir}/git"
 source "${current_dir}/python"
 source "${current_dir}/docker"
+source "${current_dir}/pnpm"
+source "${current_dir}/dotnet"
 
 source "${current_dir}/gcloud"
 source "${current_dir}/ma"

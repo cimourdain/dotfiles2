@@ -39,6 +39,8 @@ go
 python
 pyenv
 rust
+dotnet-runtime
+dotnet-sdk
 
 ### required for Gcloud
 python39

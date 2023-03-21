@@ -151,6 +151,7 @@ function init_gcloud {
     gcloud init
     gcloud auth application-default login
     gcloud auth configure-docker
+    gcloud components install gke-gcloud-auth-plugin
 }
 
 
