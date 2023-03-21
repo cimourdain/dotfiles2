@@ -9,6 +9,9 @@ Then save securely the content of the `private/` folder
 ## Pre-requisite
 Restore manually the content of the `private/` folder
 
+# Manual installations
+Install gcloud from https://cloud.google.com/sdk/docs/install?hl=fr
+
 
 # Run
 ```bash
