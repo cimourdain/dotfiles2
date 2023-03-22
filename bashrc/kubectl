@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if ! command -v kubectl &> /dev/null
+then
+    echo "[INFO]kubectl not found"
+else
+    if ! command -v kubectl krew  &> /dev/null
+    then
+        echo "[INFO]kubectl krew not found"
+    else
+        export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+    fi
+fi

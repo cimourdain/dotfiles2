@@ -19,14 +19,17 @@ docker-compose
 firefox-developer-edition
 httptoolkit
 insomnia
-k9s
 starship
 tmux
-kubectl
-kubectx
 postgresql
 zeal-git
 zsh
+
+# kube
+kubectl
+kubectx
+k9s
+krew
 
 ### enable share screen in GMeet/firefox
 xdg-desktop-portal
