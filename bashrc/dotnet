@@ -3,6 +3,7 @@ DOTNET_DIR="$HOME/.dotnet/tools"
 if [ -d "$DOTNET_DIR" ];
 then 
     export PATH="$HOME/.dotnet/tools:$PATH"
+    export MSBuildSDKsPath=$( echo /usr/share/dotnet/sdk/7.*/Sdks );
 else
     echo "[INFO]Dotnet not found in ${DOTNET_DIR}"
 fi

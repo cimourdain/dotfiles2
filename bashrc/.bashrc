@@ -93,6 +93,7 @@ eval "$(starship init bash)"
 
 # source subfiles
 current_dir=$(dirname $(realpath ${HOME}/.bashrc))
+source "${current_dir}/arch"
 source "${current_dir}/ssh"
 source "${current_dir}/git"
 source "${current_dir}/gcloud"
@@ -100,10 +101,10 @@ source "${current_dir}/kubectl"
 source "${current_dir}/docker"
 source "${current_dir}/pnpm"
 source "${current_dir}/dotnet"
+source "${current_dir}/golang"
 
 
 source "${current_dir}/ma"
-
 
 
 # INTEL drivers

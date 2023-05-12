@@ -1,5 +1,6 @@
 #!/bin/bash
 
+<<<<<<< HEAD
 if ! command -v berglas &> /dev/null
 then
     echo "[WARNING]berglas not found, cannot source PACKAGECLOUD_TOKEN"
@@ -15,3 +16,7 @@ then
 else 
     echo "[INFO]MA Infra Repo not found in ${MA_INFRA_PATH}"
 fi
+=======
+export PACKAGECLOUD_TOKEN=$(berglas access sm://ma-dev2/packagecloud-token\#1)
+source ~/MA/MA-Infra/tools/gssh/gssh.sh
+>>>>>>> c345517 (:heavy_plus_sign: golang + arch)

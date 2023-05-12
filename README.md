@@ -24,6 +24,14 @@ After restore init applications
 ./script.sh init
 ```
 
+# VSCode & Unity
+ctrl+P `settings.json`
+```json
+{
+    "omnisharp.useModernNet": false,
+}
+```
+
 
 # Theme
 - Gnome Shell:
