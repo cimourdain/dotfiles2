@@ -1,6 +1,10 @@
 # System
 octopi
 
+# Hardware
+## Logitech MX Master
+solaar
+
 # Gnome
 firefox-extension-gnome-shell-integration
 
