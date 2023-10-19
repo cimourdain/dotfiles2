@@ -16,3 +16,13 @@ then
 else 
     echo "[INFO]MA Infra Repo not found in ${MA_INFRA_PATH}"
 fi
+
+
+dev_db() (
+    tmux new-session -d bash
+    tmux split-window -h bash
+    tmux send -t 0:0.0 "kubectl port-forward -n dev --address 0.0.0.0 service/pgbouncer-www-db 6543:6543" C-m
+    sleep 2
+    tmux send -t 0:0.1 "bash -c 'psql postgresql://$(berglas access sm://ma-dev2/www-db-dev-credentials#latest)@localhost:6543/meilleursagents_dev'" C-m
+    tmux -2 attach-session -d
+)
