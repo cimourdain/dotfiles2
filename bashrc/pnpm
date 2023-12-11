@@ -1,9 +1,0 @@
-PNPM_HOME_PATH="${HOME}/.local/share/pnpm"
-
-if [ -d "${PNPM_PATH}" ];
-then
-    export PNPM_HOME="${PNPM_HOME_PATH}"
-    export PATH="$PNPM_HOME:$PATH"
-else
-    echo "[INFO]PNPM not found in ${PNPM_HOME_PATH}"
-fi

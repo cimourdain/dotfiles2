@@ -47,13 +47,18 @@ python
 pyenv
 rust
 
+# js
+npm
+nvm
+pnpm
+
 ### C# for Unity
-dotnet-runtime
-dotnet-sdk
-dotnet-targeting-pack
-mono
-mono-msbuild
-mono-msbuild-sdkresolver
+#dotnet-runtime
+#dotnet-sdk
+#dotnet-targeting-pack
+#mono
+#mono-msbuild
+#mono-msbuild-sdkresolver
 
 ### required for Gcloud
 python39

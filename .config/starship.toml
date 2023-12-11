@@ -1,0 +1,22 @@
+[custom.pnpm]
+command = "pnpm --version"
+detect_files = ["package.json", "tsconfig.json", 'pnpm-lock.yaml']
+detect_extensions = ['js', 'ts']
+style = 'blue bold'
+format = "pnpm [$output]($style) "
+
+# [custom.nvm]
+# command = "echo $(bash nvm --version)"
+# detect_files = ["package.json", "tsconfig.json", 'pnpm-lock.yaml']
+# detect_extensions = ['js', 'ts']
+# style = 'orange bold'
+# format = "nvm [$output]($style)X"
+
+[nodejs]
+symbol = "⬢ "
+
+[gcloud]
+disabled = true
+
+[aws]
+force_display = true

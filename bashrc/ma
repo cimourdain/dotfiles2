@@ -20,9 +20,30 @@ fi
 
 dev_db() (
     tmux new-session -d bash
-    tmux split-window -h bash
+    tmux split-window -v bash
+    tmux select-pane -t 1
+    tmux resize-pane -U 50
     tmux send -t 0:0.0 "kubectl port-forward -n dev --address 0.0.0.0 service/pgbouncer-www-db 6543:6543" C-m
     sleep 2
-    tmux send -t 0:0.1 "bash -c 'psql postgresql://$(berglas access sm://ma-dev2/www-db-dev-credentials#latest)@localhost:6543/meilleursagents_dev'" C-m
+    tmux send -t 0:0.1 "psql postgresql://$(berglas access sm://ma-dev2/www-db-dev-credentials#latest)@localhost:6543/meilleursagents_dev" C-m
     tmux -2 attach-session -d
 )
+
+dev_db2() (
+    session="$USER"
+    window="$session:1"
+
+    lines="$(tput lines)"
+    columns="$(tput cols)"
+
+    tmux -2 new-session -d -x "$columns" -y "$lines" -s "$session" 'echo "session command";bash'
+    tmux new-window -t "$window" -n 'Logs' 'clear && echo "first window command";bash' || exit
+
+    tmux split-window -t "$window" -v -l 80% -d 'clear &&  echo "pane command";bash'
+
+    tmux select-window -t "$window"
+
+    # Attach to session
+    tmux -2 attach-session -t "$session"
+)
+

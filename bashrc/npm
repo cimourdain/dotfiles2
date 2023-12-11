@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# js_file_count=$(shell ls -1 *.js 2>/dev/null | wc -l)
+# if [ "$js_file_count" != "0" ]; then
+#   echo "There are JavaScript files (not directories with .js extension) inside ‘directory’"
+# else 
+#     echo "No Js file in ${js_file_count}"
+# fi
+
+# if ! command -v "pnpm --version" &> /dev/null
+# then
+#     echo "[WARNING]pnpm not found"
+# fi
+
+
+
+N_PATH="${HOME}/.npm-global/bin"
+N_PREFIX_PATH="${HOME}/n"
+if [ -d "${N_PATH}" ] && [ -d "${N_PREFIX_PATH}" ];
+then
+    export PATH="${N_PATH}:${N_PREFIX}:$PATH"
+    export N_PREFIX="${N_PREFIX_PATH}"
+else
+    echo "[WARNING]N setup failed, either path ${N_PATH} or ${N_PREFIX_PATH} is not a valid directory."
+fi
+
+NVM_PATH="/usr/share/nvm/init-nvm.sh"
+if [ -f "${NVM_PATH}" ];
+then
+    source "$NVM_PATH"
+else
+    echo "[INFO]NVM not found in ${NVM_PATH}"
+fi
+

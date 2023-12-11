@@ -144,6 +144,40 @@ function restore_startup_services {
     sudo systemctl enable docker.service
 }
 
+function restore_starship {
+    CONFIG_PATH="${HOME}/.config"
+    DOTFILES_STARSHIP_CONFIG_FILE_PATH="${PWD}/.config/starship.toml"
+    if [ ! -d "${N_PATH}" ];
+    then
+        mkdir -p "${CONFIG_PATH}"
+    fi
+
+    STARSHIP_CONFIG_FILE="starship.toml"
+    if [ -f "${CONFIG_PATH}/${STARSHIP_CONFIG_FILE}" ];
+    then
+        if [ ! -L "${CONFIG_PATH}/${STARSHIP_CONFIG_FILE}" ];
+        then
+            echo "backup existing starship config to ${CONFIG_PATH}/${STARSHIP_CONFIG_FILE}.back"
+            mv "${CONFIG_PATH}/${STARSHIP_CONFIG_FILE}" "${CONFIG_PATH}/${STARSHIP_CONFIG_FILE}.back"
+            echo "create new symlink to ${DOTFILES_STARSHIP_CONFIG_FILE_PATH} in ${CONFIG_PATH}"
+            ln -s ${DOTFILES_STARSHIP_CONFIG_FILE_PATH} ${CONFIG_PATH}
+        else
+            if [ ! $(readlink -f "${CONFIG_PATH}/${STARSHIP_CONFIG_FILE}")=${DOTFILES_STARSHIP_CONFIG_FILE_PATH} ]
+            then
+                echo "fix symlink"
+                ln -sf ${DOTFILES_STARSHIP_CONFIG_FILE_PATH} ${CONFIG_PATH}
+            else
+                echo "symlink to dotfiles is ok, nothing to do"
+            fi
+        fi
+    else
+        echo "create new symlink to ${DOTFILES_STARSHIP_CONFIG_FILE_PATH} in ${CONFIG_PATH}"
+        ln -s ${DOTFILES_STARSHIP_CONFIG_FILE_PATH} ${CONFIG_PATH}
+    fi
+    
+    
+}
+
 ################
 # GCLOUD
 ################
