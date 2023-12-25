@@ -72,6 +72,34 @@ function restore_bashrc {
     ln -s ${PWD}/bashrc/.bashrc ${HOME}
 }
 
+# function _fix_symlink(){
+#     local path=${1}
+#     local filename=${2}
+#     local target=${3}
+
+#     ls -a "${target}" | grep "${filename}"
+#     if [[ ! -L "${path}/${filename}" || ! $(readlink -f "${path}/${filename}")=${target} ]];
+#     then
+#         if [[ -f "${target}/${filename}" ]];then
+#             echo "backup existing file in ${target}/${filename}"
+#             # rm "${target}/${filename}"
+#         else
+#             echo "${target}/${filename} do not exist"
+#         fi
+#         echo "create symlink to ${path}/${filename} in ${target}"
+#         # ln -s "${path}/${filename}" "$target"
+#     fi
+# }
+
+# function restore_crons {
+#     JOURNALCTL_CRON_FILES_PATH="${PWD}/journalctl_crons"
+    
+#     _fix_symlink ${JOURNALCTL_CRON_FILES_PATH} update.service /etc/systemd/system
+#     # _fix_symlink ${JOURNALCTL_CRON_FILES_PATH} update.timer /etc/systemd/system
+
+#     # sudo sudo systemctl --user daemon-reload && sudo systemctl enable --user update.service && sudo systemctl --user enable update.timer
+# }
+
 ################
 # GIT Config
 ################

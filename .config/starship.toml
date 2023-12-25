@@ -16,7 +16,8 @@ format = "pnpm [$output]($style) "
 symbol = "⬢ "
 
 [gcloud]
-disabled = true
+symbol = "GCloud "
+disabled = false
 
 [aws]
 force_display = true

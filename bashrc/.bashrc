@@ -86,14 +86,11 @@ _open_files_for_editing() {
 ################################################################################
 # SSH
 
-
-
 # STARSHIP
 eval "$(starship init bash)"
 
 # source subfiles
 current_dir=$(dirname $(realpath ${HOME}/.bashrc))
-source "${current_dir}/arch"
 source "${current_dir}/ssh"
 source "${current_dir}/git"
 source "${current_dir}/gcloud"

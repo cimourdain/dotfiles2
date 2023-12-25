@@ -14,21 +14,20 @@
 
 
 
-N_PATH="${HOME}/.npm-global/bin"
-N_PREFIX_PATH="${HOME}/n"
-if [ -d "${N_PATH}" ] && [ -d "${N_PREFIX_PATH}" ];
-then
-    export PATH="${N_PATH}:${N_PREFIX}:$PATH"
-    export N_PREFIX="${N_PREFIX_PATH}"
-else
-    echo "[WARNING]N setup failed, either path ${N_PATH} or ${N_PREFIX_PATH} is not a valid directory."
-fi
+# N_PREFIX_PATH="${HOME}/.npm/n"
+# if [ ! -d "${N_PREFIX_PATH}" ];
+# then
+#     echo "[info]Create n directory ${N_PREFIX_PATH}"
+#     mkdir -p ${N_PREFIX_PATH}
+# fi
+# export N_PREFIX="${N_PREFIX_PATH}"
+# export PATH="${N_PREFIX_PATH}/bin:$PATH"
 
-NVM_PATH="/usr/share/nvm/init-nvm.sh"
-if [ -f "${NVM_PATH}" ];
-then
-    source "$NVM_PATH"
-else
-    echo "[INFO]NVM not found in ${NVM_PATH}"
-fi
+# NVM_PATH="/usr/share/nvm/init-nvm.sh"
+# if [ -f "${NVM_PATH}" ];
+# then
+#     source "$NVM_PATH"
+# else
+#     echo "[INFO]NVM not found in ${NVM_PATH}"
+# fi
 
