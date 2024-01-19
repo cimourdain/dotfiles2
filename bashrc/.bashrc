@@ -91,18 +91,20 @@ eval "$(starship init bash)"
 
 # source subfiles
 current_dir=$(dirname $(realpath ${HOME}/.bashrc))
-source "${current_dir}/ssh"
-source "${current_dir}/git"
-source "${current_dir}/gcloud"
-source "${current_dir}/aws"
-source "${current_dir}/kubectl"
-source "${current_dir}/docker"
-source "${current_dir}/npm"
+source "${current_dir}/tools/ssh"
+source "${current_dir}/tools/git"
+# source "${current_dir}/cloud_providers/gcloud"
+source "${current_dir}/cloud_providers/aws"
+# source "${current_dir}/tools/kubectl"
+source "${current_dir}/tools/docker"
+source "${current_dir}/tools/n"
 # source "${current_dir}/dotnet"
-source "${current_dir}/golang"
+# source "${current_dir}/lang/golang"
+source "${current_dir}/lang/terraform"
 
 
-source "${current_dir}/ma"
+# source "${current_dir}/projects/ma"
+source "${current_dir}/projects/wlac"
 
 
 # INTEL drivers

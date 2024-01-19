@@ -4,7 +4,7 @@ sudo reflector --protocol https --verbose --latest 25 --sort rate --save /etc/pa
 
 sudo eos-rankmirrors 
 
-yay -Syu --noconfirm
+yay -Sy archlinux-keyring && yay -Syu --noconfirm
 
 journalctl --vacuum-time=4weeks
 

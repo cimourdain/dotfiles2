@@ -1,0 +1,58 @@
+#!/bin/bash
+
+_check_profile(){
+  local profile=${1:-"undefined"}
+
+  local existing_profiles
+  existing_profiles=$(aws configure list-profiles | grep "$profile")
+
+  if [[ ! "$existing_profiles" == *"$profile"* ]]; then
+    return 1
+  fi
+  return 0
+}
+
+_build_profile(){
+  local env=${1:-"dev"}
+  local workspace=${2:-"assured-muskrat"}
+
+  local profile="${workspace}-${env}"
+
+  # local is_valid_profile
+  _check_profile "${profile}"
+
+  if [[ $? -eq 1 ]]; then
+    echo "undefined"
+  else
+    echo "${profile}"
+  fi
+
+}
+
+awss() {
+  local profile
+  profile=$(_build_profile "$@")
+  if [[ $profile == "undefined" ]]; then
+    echo "💥 Exit, profile not found"
+    return 1
+  fi
+
+  echo "👽 Set AWS_PROFILE to $profile"
+  export AWS_PROFILE="${profile}"
+  return 0
+}
+
+awsl() {
+  local profile
+  profile=$(_build_profile "$@")
+  if [[ $profile == "undefined" ]]; then
+    echo "💥 Exit, profile not found"
+    return 1
+  fi
+
+
+  echo "🔑 Login on aws"
+  aws sso login --profile "${profile}"
+
+  awss "$@"
+}

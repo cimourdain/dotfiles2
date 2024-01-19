@@ -49,8 +49,10 @@ rust
 
 # js
 npm
-nvm
 pnpm
+
+# infra
+terraform
 
 ### C# for Unity
 #dotnet-runtime
@@ -65,7 +67,7 @@ python39
 
 ## IDE
 visual-studio-code-bin
-phpstorm
+# phpstorm
 pycharm-professional
 vim
 
