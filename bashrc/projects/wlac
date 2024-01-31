@@ -1,5 +1,14 @@
 #!/bin/bash
 
+_key_exists_in_array(){
+  if [ "$2" != in ]; then
+    echo "Incorrect usage."
+    echo "Correct usage: exists {key} in {array}"
+    return
+  fi   
+  eval '[ ${'$3'[$1]+muahaha} ]'  
+}
+
 _check_profile(){
   local profile=${1:-"undefined"}
 
@@ -12,28 +21,52 @@ _check_profile(){
   return 0
 }
 
-_build_profile(){
-  local env=${1:-"dev"}
-  local workspace=${2:-"assured-muskrat"}
+_build_profile_name_from_input(){
+  declare -A envmap
+  envmap["d"]="dev"
+  envmap["p"]="preview"
+  envmap["l"]="live"
+  envmap["s"]="sandbox"
 
-  local profile="${workspace}-${env}"
-
-  # local is_valid_profile
-  _check_profile "${profile}"
-
-  if [[ $? -eq 1 ]]; then
-    echo "undefined"
-  else
-    echo "${profile}"
+  local env="dev"
+  local input_env=${1:-"d"}
+  if _key_exists_in_array "${input_env}" in envmap; then 
+    env=${envmap[${input_env}]}
   fi
 
+  declare -A workspaces
+  workspaces['bff']="assured-muskrat"
+  workspaces['rc']="glorious-rhino"
+
+  local workspace=${workspaces["bff"]}
+  local input_workspace=${2:-"bff"}
+  if _key_exists_in_array "${input_workspace}" in workspaces; then 
+    workspace=${workspaces[${input_workspace}]}
+  fi
+
+  local profile="${workspace}-${env}"
+  echo "${profile}"
 }
 
 awss() {
+  # Switch AWS profile for WLAC
+  # Usage:
+  #   awsl <env> <workspace>
+  #   env values:
+  #      - d: dev
+  #      - p: preview
+  #      - s: sandbox
+  #      - l: live
+  #   workspace values:
+  #      - bff
+  #      - rc: recommendation
   local profile
-  profile=$(_build_profile "$@")
-  if [[ $profile == "undefined" ]]; then
-    echo "💥 Exit, profile not found"
+  profile=$(_build_profile_name_from_input "$@")
+  echo "🐮Attempt to set AWS profile: ${profile}"
+
+  _check_profile "${profile}"
+  if [[ $? -eq 1 ]]; then
+    echo "💥 Exit, ${profile} not found in configuration, run 'aws configure list-profiles' to get list of configured profiles"
     return 1
   fi
 
@@ -43,16 +76,31 @@ awss() {
 }
 
 awsl() {
+  # Login with a AWS profile for WLAC
+  # Usage:
+  #   awsl <env> <workspace>
+  #   env values:
+  #      - d: dev
+  #      - p: preview
+  #      - s: sandbox
+  #      - l: live
+  #   workspace values:
+  #      - bff
+  #      - rc: recommendation
   local profile
-  profile=$(_build_profile "$@")
-  if [[ $profile == "undefined" ]]; then
-    echo "💥 Exit, profile not found"
+  profile=$(_build_profile_name_from_input "$@")
+  echo "🐮Attempt to login with AWS profile: ${profile}"
+
+  _check_profile "${profile}"
+  if [[ $? -eq 1 ]]; then
+    echo "💥 Exit, ${profile} not found in configuration, run 'aws configure list-profiles' to get list of configured profiles"
     return 1
   fi
-
+  echo "${profile}"
 
   echo "🔑 Login on aws"
   aws sso login --profile "${profile}"
 
-  awss "$@"
+  echo "👽 Set AWS_PROFILE to $profile"
+  export AWS_PROFILE="${profile}"
 }
