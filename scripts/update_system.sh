@@ -1,13 +1,22 @@
 #! /bin/sh
 
+echo "🤝 Update (1/2): Arch mirrors"
 sudo reflector --protocol https --verbose --latest 25 --sort rate --save /etc/pacman.d/mirrorlist --country France,Germany,Netherlands,Switzerland,Finland 
 
+echo "🤝 Update (2/2): EndavourOs mirrors"
 sudo eos-rankmirrors 
 
-yay -Sy archlinux-keyring && yay -Syu --noconfirm
+echo "🔐 Update archlinux-keyring"
+yay -Sy archlinux-keyring 
 
-journalctl --vacuum-time=4weeks
+echo "🔼 Upgrade system"
+yay -Syu --noconfirm
 
-paccache -ruk0
+echo "⭐ Clean (1/2): unneeded dependencies"
+yay -Yc
 
-yay -Rns $(pacman -Qdtq)
+echo "⭐ Clean (2/2): journal"
+sudo journalctl --vacuum-time=4weeks
+
+echo "🖥️ System info after update"
+yay -Ps
