@@ -14,13 +14,16 @@ catppuccin-gtk-theme-macchiato
 # fonts
 noto-fonts-emoji
 
+# Browsers
+firefox-developer-edition
+chromium-snapshot-bin
+
 # DEV
 ## tools
 alacritty
 bash-completion
 docker
 docker-compose
-firefox-developer-edition
 httptoolkit
 insomnia
 starship
@@ -62,9 +65,6 @@ terraform
 #mono-msbuild
 #mono-msbuild-sdkresolver
 
-### required for Gcloud
-python39
-
 ## IDE
 visual-studio-code-bin
 # phpstorm
@@ -80,5 +80,14 @@ shutter
 slack-desktop
 
 # MA
-google-cloud-sdk
 berglas-bin
+
+# Cloud Providers
+## Gcloud
+google-cloud-sdk
+### required for Gcloud
+python39
+
+## AWS
+aws-cli-v2-bin
+aws-sam-cli-bin
