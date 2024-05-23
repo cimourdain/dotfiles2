@@ -51,15 +51,15 @@ _build_profile_name_from_input(){
 awss() {
   # Switch AWS profile for WLAC
   # Usage:
-  #   awsl <env> <workspace>
+  #   awsl <workspace> <env>
+  #   workspace values:
+  #      - bff
+  #      - rc: recommendation
   #   env values:
   #      - d: dev
   #      - p: preview
   #      - s: sandbox
   #      - l: live
-  #   workspace values:
-  #      - bff
-  #      - rc: recommendation
   local profile
   profile=$(_build_profile_name_from_input "$@")
   echo "🐮Attempt to set AWS profile: ${profile}"
