@@ -53,6 +53,7 @@ rust
 # js
 npm
 pnpm
+nvm
 
 # infra
 terraform
