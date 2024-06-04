@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "WlacBFF",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

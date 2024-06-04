@@ -1,0 +1,63 @@
+meta {
+  name: contactRequestEstimationFunnelIWB
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BFF_URL}}/v1/contact_request/estimation_funnel
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "legacyBrandId":"2258636", 
+    "brand":"IWB", 
+    "isTopPosition": true, 
+    "context":"estimation_funnel",
+    "estimation":{
+      "estimationId":"11111111-1111-1111-1111-111111111111",
+      "prices":{
+        "avg":399900,
+        "max":420000,
+        "min":350000
+      },
+      "valuationDate":"2024-03-15T14:51:21.244Z"
+    },
+    "owner":{
+      "activeLanguage":"en",
+      "email":"toto@titi.com",
+      "firstName":"Toto",
+      "intent":"WantsToSellInLessThanThreeMonths",
+      "lastName":"Titi",
+      "phone":{
+        "number":"0111111111",
+        "regionCode":"33"
+      }
+    },
+    "property":{
+      "details":{
+        "bathroomCount":1,
+        "bedroomCount":1,
+        "construction":{
+          "constructionYear":2002
+        },
+        "epcEnergyEfficiencyRating":"A",
+        "habitableSurface":30,
+        "hasABalconyOrTerrace":true,
+        "propertyCondition":"Nice",
+        "propertySubType":"Apartment",
+        "propertyType":"Apartment"
+      },
+      "localization":{
+        "city":"Charleroi",
+        "coordinates":{
+          "lat":51.2593008,
+          "lng":4.79091201
+        },
+        "zipCode":"6030"
+      }
+    }
+  }
+}
