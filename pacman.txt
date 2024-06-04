@@ -16,7 +16,7 @@ noto-fonts-emoji
 
 # Browsers
 firefox-developer-edition
-chromium-snapshot-bin
+ungoogled-chromium-bin
 
 # DEV
 ## tools
@@ -24,7 +24,7 @@ alacritty
 bash-completion
 docker
 docker-compose
-httptoolkit
+# httptoolkit (electron dependency)
 insomnia
 starship
 tmux
