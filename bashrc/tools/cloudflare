@@ -2,8 +2,20 @@
 
 # Install
 # $ yay -S cloudflare-warp-bin
+# $ sudo systemctl start warp-svc
 # $ warp-cli registration new
 # $ warp-cli teams-enroll aviv-group
+
+# function is_in_activation {
+#     activation=$(systemctl status "$1" | grep "Active: active (running)" )
+#     if [ -z "$activation" ]; then
+#         true;
+#     else
+#         false;
+#     fi
+
+#     return $?;
+# }
 
 function cfs {
     sudo systemctl start warp-svc
@@ -12,4 +24,4 @@ function cfs {
 
 function cfk {
     sudo systemctl stop warp-svc
-} 
+}
