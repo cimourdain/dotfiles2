@@ -13,11 +13,11 @@ post {
 body:json {
   {
     "legacyBrandId":"2258636", 
-    "brand":"IWB", 
+    "brand":"{{brand}}", 
     "isTopPosition": true, 
     "context":"estimation_funnel",
     "estimation":{
-      "estimationId":"11111111-1111-1111-1111-111111111111",
+      "estimationId":"{{estimationId}}",
       "prices":{
         "avg":399900,
         "max":420000,
@@ -60,4 +60,17 @@ body:json {
       }
     }
   }
+}
+
+script:pre-request {
+  const {faker} = require('@faker-js/faker');
+  
+  const brand = faker.helpers.arrayElement(['IWB', 'SL', 'LI'])
+  bru.setVar('brand', brand);
+  
+  const isTopPosition = faker.helpers.arrayElement(['IWB', 'SL', 'LI'])
+  bru.setVar('brand', brand);
+  
+  const estimationId = faker.datatype.uuid();
+  bru.setVar('estimationId', estimationId);
 }
