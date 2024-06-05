@@ -25,7 +25,7 @@ bash-completion
 docker
 docker-compose
 # httptoolkit (electron dependency)
-insomnia
+bruno-bin
 starship
 tmux
 postgresql
