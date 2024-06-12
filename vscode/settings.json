@@ -1,0 +1,103 @@
+{
+  // auto format on save
+  "editor.formatOnSave": true,
+  "files.autoSave": "afterDelay",
+  "diffEditor.ignoreTrimWhitespace": false,
+
+  // This matches the value configured on the autoformatter
+  "editor.rulers": [80],
+
+  // When enabled, will trim trailing whitespace when saving a file.
+  "files.trimTrailingWhitespace": true,
+
+  // Theme
+  "workbench.colorTheme": "Catppuccin Macchiato",
+  "workbench.iconTheme": "catppuccin-macchiato",
+
+  // TypeScript configuration
+  "[typescript][javascript][json]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
+    // An array of language ids which should be validated by ESLint
+    "eslint.validate": ["javascript", "typescript"],
+    // required to make the extension pickup the flat config
+    "eslint.experimental.useFlatConfig": true,
+
+    // typescript auto-format settings
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "javascript.preferences.importModuleSpecifier": "project-relative",
+    "typescript.preferences.importModuleSpecifier": "project-relative",
+    "javascript.preferences.quoteStyle": "single",
+    "typescript.preferences.quoteStyle": "single",
+    "prettier.singleQuote": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // Python
+  "[python]": {
+    "typescript.preferences.quoteStyle": "double",
+    "files.exclude": {
+      "**/__pycache__": true
+    }
+  },
+  // PHP
+  "files.associations": {
+    "*.inc": "php"
+  },
+  // Markdown
+  "[markdown]": {
+    "markdown-preview-enhanced.previewTheme": "github-dark.css"
+  },
+  // bash/shell
+  "[shellscript]": {
+    "editor.defaultFormatter": "shakram02.bash-beautify"
+  },
+  // YAML
+  "[yaml][dockercompose][github-actions-workflow]": {
+    "editor.autoIndent": "advanced",
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.insertSpaces": true,
+		"editor.tabSize": 2,
+    "yaml.customTags": [
+      "!And",
+      "!And sequence",
+      "!If",
+      "!If sequence",
+      "!Not",
+      "!Not sequence",
+      "!Equals",
+      "!Equals sequence",
+      "!Or",
+      "!Or sequence",
+      "!FindInMap",
+      "!FindInMap sequence",
+      "!Base64",
+      "!Join",
+      "!Join sequence",
+      "!Cidr",
+      "!Ref",
+      "!Sub",
+      "!Sub sequence",
+      "!GetAtt",
+      "!GetAZs",
+      "!ImportValue",
+      "!ImportValue sequence",
+      "!Select",
+      "!Select sequence",
+      "!Split",
+      "!Split sequence"
+    ]
+  },
+  // Extensions
+  // Emojisense
+  "emojisense.unicodeCompletionsEnabled": true,
+  "emojisense.markupCompletionsEnabled": true,
+  "emojisense.languages": {
+    "markdown": true,
+    "plaintext": true,
+    "json": true,
+    "typescript": true,
+    "javascript": true,
+    "python": true
+}
+}

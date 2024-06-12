@@ -38,11 +38,11 @@ function restore_gpg {
 # SSH
 ################
 function backup_ssh {
-  echo "Backup ssh keys"
-  rm -rf ${BACKUP_FOLDER}ssh
-  mkdir -p ${BACKUP_FOLDER}ssh
-  cp ${HOME}/.ssh/id_rsa* ${BACKUP_FOLDER}ssh
-  cp ${HOME}/.ssh/config ${BACKUP_FOLDER}ssh
+    echo "Backup ssh keys"
+    rm -rf ${BACKUP_FOLDER}ssh
+    mkdir -p ${BACKUP_FOLDER}ssh
+    cp ${HOME}/.ssh/id_rsa* ${BACKUP_FOLDER}ssh
+    cp ${HOME}/.ssh/config ${BACKUP_FOLDER}ssh
 }
 
 function restore_ssh {
@@ -60,7 +60,7 @@ function restore_ssh {
 # Bashrc
 ################
 function restore_bashrc {
-
+    
     if [[ ! -L "$HOME/.bashrc" ]]; then
         echo "Save current .bashrc to $HOME/.bashrc.bak"
         mv "$HOME/.bashrc" "$HOME/.bashrc.bak"
@@ -93,12 +93,29 @@ function restore_bashrc {
 
 # function restore_crons {
 #     JOURNALCTL_CRON_FILES_PATH="${PWD}/journalctl_crons"
-    
+
 #     _fix_symlink ${JOURNALCTL_CRON_FILES_PATH} update.service /etc/systemd/system
 #     # _fix_symlink ${JOURNALCTL_CRON_FILES_PATH} update.timer /etc/systemd/system
 
 #     # sudo sudo systemctl --user daemon-reload && sudo systemctl enable --user update.service && sudo systemctl --user enable update.timer
 # }
+
+################
+# Bashrc
+################
+function restore_vscode {
+    mkdir -p $HOME/.config/Code/User
+    if [[ ! -L "$HOME/.config/Code/User/settings.json" ]]; then
+        echo "Save current ${HOME}/.config/Code/User/settings.json to ${HOME}/.config/Code/User/settings.json.back"
+        mv "${HOME}/.config/Code/User/settings.json" "${HOME}/.config/Code/User/settings.json.back"
+    else
+        rm "${HOME}/.config/Code/User/settings.json"
+    fi
+    
+    echo "create ${HOME}/.config/Code/User/settings.json symlink"
+    ln -s ${PWD}/vscode/settings.json ${HOME}/.config/Code/User/
+}
+
 
 ################
 # GIT Config
@@ -107,23 +124,23 @@ function restore_git {
     if [[ -f ${HOME}/.gitignore_global ]];then
         echo "backup existing gitignore_global"
         mv ${HOME}/.gitignore_global ${HOME}/.gitignore_global.bak
-    elif [[ -L ${HOME}/.gitignore_global ]];then
+        elif [[ -L ${HOME}/.gitignore_global ]];then
         echo  "delete existing gitignore_global symbolic link"
         rm ${HOME}/.gitignore_global
     else
         echo "no existing file ${HOME}/.gitignore_global"
     fi
-
+    
     if [[ -f ${HOME}/.gitconfig ]];then
         echo "backup existing gitconfig"
         mv ${HOME}/.gitconfig ${HOME}/.gitconfig.bak
-    elif [[ -L ${HOME}/.gitconfig ]];then
+        elif [[ -L ${HOME}/.gitconfig ]];then
         echo  "delete existing gitconfig symbolic link"
         rm ${HOME}/.gitconfig
     else
         echo "no existing file ${HOME}/.gitconfig"
     fi
-
+    
     echo "create new symlinks to current dotfiles"
     ln -s ${PWD}/gitfiles/.gitignore_global ${HOME}
     ln -s ${PWD}/gitfiles/.gitconfig ${HOME}
@@ -156,7 +173,7 @@ function restore_docker {
 function restore_system {
     # echo "update arch mirror list"
     # sudo reflector --save /etc/pacman.d/mirrorlist --country France,Germany,Belgium,Netherland --protocol https --latest 10
-
+    
     echo "restore installed packages"
     yay -Syyu
     yay --noconfirm -Sy $(grep -Ev ^'(#|$)' "${PWD}/pacman.txt")
@@ -179,7 +196,7 @@ function restore_starship {
     then
         mkdir -p "${CONFIG_PATH}"
     fi
-
+    
     STARSHIP_CONFIG_FILE="starship.toml"
     if [ -f "${CONFIG_PATH}/${STARSHIP_CONFIG_FILE}" ];
     then
@@ -221,8 +238,8 @@ function init_gcloud {
 # MAIN
 ################
 function backup {
-  backup_gpg
-  backup_ssh
+    backup_gpg
+    backup_ssh
 }
 
 function restore {
@@ -243,10 +260,10 @@ function init {
 # Check if the function exists (bash specific)
 if declare -f "$1" > /dev/null
 then
-  # call arguments verbatim
-  "$@"
+    # call arguments verbatim
+    "$@"
 else
-  # Show a helpful error
-  echo "'$1' is not a known function name" >&2
-  exit 1
+    # Show a helpful error
+    echo "'$1' is not a known function name" >&2
+    exit 1
 fi
