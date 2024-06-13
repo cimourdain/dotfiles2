@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: {{BFF_URL}}/v1/recommendation/estimation_funnel/IWB?estimationId={{estimationId}}&lat=51.2593008591088&lng=4.79091201914399&price={{price}}&propertyType={{propertyType}}&zipCode=6030&activeLanguage={{activeLanguage}}
+  url: {{BFF_URL}}/v1/recommendation/estimation_funnel/IWB?estimationId={{estimationId}}&lat=51.2593008591088&lng=4.79091201914399&price={{price}}&propertyType={{propertyType}}&zipCode=6030
   body: none
   auth: none
 }
@@ -17,7 +17,7 @@ query {
   price: {{price}}
   propertyType: {{propertyType}}
   zipCode: 6030
-  activeLanguage: {{activeLanguage}}
+  ~activeLanguage: {{activeLanguage}}
 }
 
 script:pre-request {
@@ -42,8 +42,15 @@ tests {
     expect(res.getStatus()).to.equal(200);
   });
    
-  test("should contains a list of agencies", function() {
+  test("should contains a list of 21 agencies", function() {
     const data = res.getBody();
-    expect(data.agencies && data.agencies.length > 0);
+    expect(data).have.property('agencies');
+    expect(data.agencies).with.lengthOf(21);
+  });
+  
+  test("should have a topPosition agency as first result", function() {
+    const data = res.getBody();
+    expect(data).have.property('agencies');
+    expect(data.agencies[0].isTopPosition).to.equal(true);
   });
 }

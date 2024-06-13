@@ -1,3 +1,4 @@
 .idea/
 private/*
 bruno/**/node_modules
+bruno/**/pnpm-lock.yaml

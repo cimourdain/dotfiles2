@@ -74,3 +74,10 @@ script:pre-request {
   const estimationId = faker.datatype.uuid();
   bru.setVar('estimationId', estimationId);
 }
+
+tests {
+  test("should return 200", function() {
+    const data = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+  });
+}

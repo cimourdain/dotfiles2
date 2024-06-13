@@ -5,19 +5,19 @@ meta {
 }
 
 get {
-  url: {{BFF_URL}}/v1/recommendation/estimation_funnel/LI?area={{area}}&lat=48.87481671088&lng=2.3184923&price={{price}}&propertyType={{propertyType}}&activeLanguage={{activeLanguage}}&addressId=28595&estimationId={{estimationId}}
+  url: {{BFF_URL}}/v1/recommendation/estimation_funnel/LI?livingSurface={{area}}&lat=48.87481671088&lng=2.3184923&price={{price}}&propertyType={{propertyType}}&activeLanguage={{activeLanguage}}&legacyAddressId=28595&estimationId={{estimationId}}
   body: none
   auth: none
 }
 
 query {
-  area: {{area}}
+  livingSurface: {{area}}
   lat: 48.87481671088
   lng: 2.3184923
   price: {{price}}
   propertyType: {{propertyType}}
   activeLanguage: {{activeLanguage}}
-  addressId: 28595
+  legacyAddressId: 28595
   estimationId: {{estimationId}}
 }
 
@@ -36,7 +36,7 @@ script:pre-request {
   const propertyType = faker.helpers.arrayElement(['Apartment', 'House'])
   bru.setVar('propertyType', propertyType);
   
-  const activeLanguage = faker.helpers.arrayElement(['en', 'fr', ''])
+  const activeLanguage = faker.helpers.arrayElement(['en', 'fr'])
   bru.setVar('activeLanguage', activeLanguage);
   
 }
@@ -49,6 +49,7 @@ tests {
    
   test("should contains a list of agencies", function() {
     const data = res.getBody();
-    expect(data.agencies && data.agencies.length > 0);
+    expect(data).have.property('agencies');
+    expect(data.agencies).with.lengthOf(15);
   });
 }
