@@ -11,8 +11,8 @@
   "files.trimTrailingWhitespace": true,
 
   // Theme
-  "workbench.colorTheme": "Catppuccin Macchiato",
-  "workbench.iconTheme": "catppuccin-macchiato",
+  "workbench.colorTheme": "Catppuccin Frappé",
+  "workbench.iconTheme": "catppuccin-frappe",
 
   // TypeScript configuration
   "[typescript][javascript][json]": {
