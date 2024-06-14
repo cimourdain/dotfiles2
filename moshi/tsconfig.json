@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    // Required if you want your code to run seamlessly with most current node.js applications.
+    // Replace this with "module": "esnext" if you're building a library for the browser
+    "module": "commonjs",
+    // Version of JavaScript your code will get transpiled to.
+    "target": "ESNext",
+    // This will generate the .d.ts files (aka declaration files) which contain the types of your code.
+    // This way, if someone is using your library and they also use TypeScript, they get the benefits of typesafety and autocomplete!
+    "declaration": true,
+    "outDir": "./dist",
+    "experimentalDecorators": true
+  },
+  "include": ["src/**/*"]
+}
