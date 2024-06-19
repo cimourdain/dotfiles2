@@ -1,7 +1,7 @@
 meta {
   name: RECO-EF-IWB
   type: http
-  seq: 1
+  seq: 2
 }
 
 get {
@@ -21,19 +21,19 @@ query {
 }
 
 script:pre-request {
-  const {faker} = require('@faker-js/faker');
+  // const {faker} = require('@faker-js/faker');
   
-  const estimationId = faker.datatype.uuid();
-  bru.setVar('estimationId', estimationId);
+  // // const estimationId = faker.datatype.uuid();
+  // // bru.setVar('estimationId', estimationId);
   
-  const price = faker.number.int({ min: 0, max: 1000000 });
-  bru.setVar('price', price);
+  // const price = faker.number.int({ min: 0, max: 1000000 });
+  // bru.setVar('price', price);
   
-  const propertyType = faker.helpers.arrayElement(['Apartment', 'House'])
-  bru.setVar('propertyType', propertyType);
+  // const propertyType = faker.helpers.arrayElement(['Apartment', 'House'])
+  // bru.setVar('propertyType', propertyType);
   
-  const activeLanguage = faker.helpers.arrayElement(['en', 'fr', ''])
-  bru.setVar('activeLanguage', activeLanguage);
+  // const activeLanguage = faker.helpers.arrayElement(['en', 'fr', ''])
+  // bru.setVar('activeLanguage', activeLanguage);
 }
 
 tests {

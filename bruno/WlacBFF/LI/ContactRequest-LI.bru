@@ -1,0 +1,69 @@
+meta {
+  name: ContactRequest-LI
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BFF_URL}}/v1/contact_request/estimation_funnel
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "legacyBrandId":"81763", 
+    "brand":"LI", 
+    "context":"estimation_funnel",
+    "estimation":{
+      "estimationId":"{{estimationId}}",
+      "prices":{
+        "avg": {{price}},
+        "max": {{priceMax}},
+        "min": {{priceMin}}
+      },
+      "valuationDate":"2024-03-15T14:51:21.244Z"
+    },
+    "owner":{
+      "activeLanguage":"en",
+      "email":"toto@titi.com",
+      "firstName":"Toto",
+      "intent":"WantsToSellInLessThanThreeMonths",
+      "lastName":"Titi",
+      "phone":{
+        "number":"0111111111",
+        "regionCode":"33"
+      }
+    },
+    "property":{
+      "details":{
+        "bathroomCount":1,
+        "bedroomCount":1,
+        "construction":{
+          "constructionYear":2002
+        },
+        "epcEnergyEfficiencyRating":"A",
+        "habitableSurface":30,
+        "hasABalconyOrTerrace":true,
+        "propertyCondition":"Nice",
+        "propertySubType":"Apartment",
+        "propertyType":"{{propertyType}}"
+      },
+      "localization":{
+        "city": "Paris",
+          "coordinates": {
+            "lat": 48.872681891644,
+            "lng": 2.3114737763566
+          },
+          "zipCode": "75008"
+      }
+    }
+  }
+}
+
+tests {
+  test("should return 200", function() {
+    const data = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+  });
+}

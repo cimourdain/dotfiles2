@@ -1,0 +1,26 @@
+meta {
+  name: BE Loc
+  type: http
+  seq: 2
+}
+
+get {
+  url: https://www.generatormix.com/random-address-in-belgium?number=1
+  body: none
+  auth: none
+}
+
+query {
+  number: 1
+}
+
+script:post-response {
+  
+  const { parse } = require('node-html-parser');
+  const html = parse(res.body);
+  const zipCodeTag = html
+      .getElementsByTagName('p')
+      .find((tag) => tag.textContent.startsWith('Postcode:'));
+    const zipCode = zipCodeTag.rawText.split(':')[1].trim();
+  console.log(zipCode);
+}

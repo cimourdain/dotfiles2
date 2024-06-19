@@ -1,7 +1,7 @@
 meta {
-  name: contactRequestEstimationFunnelIWB
+  name: ContactRequest-SL
   type: http
-  seq: 4
+  seq: 2
 }
 
 post {
@@ -12,16 +12,15 @@ post {
 
 body:json {
   {
-    "legacyBrandId":"2258636", 
-    "brand":"{{brand}}", 
-    "isTopPosition": true, 
+    "legacyBrandId":"81763", 
+    "brand":"SL", 
     "context":"estimation_funnel",
     "estimation":{
       "estimationId":"{{estimationId}}",
       "prices":{
-        "avg":399900,
-        "max":420000,
-        "min":350000
+        "avg": {{price}},
+        "max": {{priceMax}},
+        "min": {{priceMin}}
       },
       "valuationDate":"2024-03-15T14:51:21.244Z"
     },
@@ -48,31 +47,18 @@ body:json {
         "hasABalconyOrTerrace":true,
         "propertyCondition":"Nice",
         "propertySubType":"Apartment",
-        "propertyType":"Apartment"
+        "propertyType":"{{propertyType}}"
       },
       "localization":{
-        "city":"Charleroi",
-        "coordinates":{
-          "lat":51.2593008,
-          "lng":4.79091201
-        },
-        "zipCode":"6030"
+        "city": "Paris",
+          "coordinates": {
+            "lat": 48.872681891644,
+            "lng": 2.3114737763566
+          },
+          "zipCode": "75008"
       }
     }
   }
-}
-
-script:pre-request {
-  const {faker} = require('@faker-js/faker');
-  
-  const brand = faker.helpers.arrayElement(['IWB', 'SL', 'LI'])
-  bru.setVar('brand', brand);
-  
-  const isTopPosition = faker.helpers.arrayElement(['IWB', 'SL', 'LI'])
-  bru.setVar('brand', brand);
-  
-  const estimationId = faker.datatype.uuid();
-  bru.setVar('estimationId', estimationId);
 }
 
 tests {

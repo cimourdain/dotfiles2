@@ -1,0 +1,25 @@
+script:pre-request {
+  const {faker} = require('@faker-js/faker');
+  
+  const estimationId = faker.datatype.uuid();
+  bru.setVar('estimationId', estimationId);
+  
+  const price = faker.number.int({ min: 0, max: 1000000 });
+  bru.setVar('price', price);
+  
+  const priceMaxVar = faker.number.int({ min: 0, max: 10000 });
+  bru.setVar('priceMax', price + priceMaxVar);
+  
+  const priceMinVar = faker.number.int({ min: 0, max: 10000 });
+  bru.setVar('priceMin', price - priceMinVar);
+  
+  const propertyType = faker.helpers.arrayElement(['Apartment', 'House'])
+  bru.setVar('propertyType', propertyType);
+  
+  const livingSurface = faker.number.int({ min: 0, max: 10000 });
+  bru.setVar('livingSurface', livingSurface);
+  
+  // const activeLanguage = faker.helpers.arrayElement(['en', 'fr', 'nl'])
+  // bru.setVar('activeLanguage', activeLanguage);
+  
+}
