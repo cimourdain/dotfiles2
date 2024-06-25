@@ -1,0 +1,19 @@
+meta {
+  name: Recommendation
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BFF_BASE_URL}}/v1/recommendation/estimation_funnel?addressId=28595&surface=50&brand=SL&estimationId=c171fc64-9ed7-454e-b7a2-b91d1afa6767&propertyType=Apartment
+  body: none
+  auth: none
+}
+
+query {
+  addressId: 28595
+  surface: 50
+  brand: SL
+  estimationId: c171fc64-9ed7-454e-b7a2-b91d1afa6767
+  propertyType: Apartment
+}
