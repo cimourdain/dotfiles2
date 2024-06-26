@@ -19,7 +19,15 @@ script:pre-request {
   const livingSurface = faker.number.int({ min: 0, max: 10000 });
   bru.setVar('livingSurface', livingSurface);
   
-  // const activeLanguage = faker.helpers.arrayElement(['en', 'fr', 'nl'])
-  // bru.setVar('activeLanguage', activeLanguage);
+  const testReturn200 = () => {
+    const data = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+  }
+  
+  const testRecoHasAgenciesCount = (count) => {
+    const data = res.getBody();
+    expect(data).have.property('agencies');
+    expect(data.agencies).with.lengthOf(count);
+  }
   
 }

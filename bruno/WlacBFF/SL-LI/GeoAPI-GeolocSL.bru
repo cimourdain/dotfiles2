@@ -1,0 +1,55 @@
+meta {
+  name: GeoAPI-GeolocSL
+  type: http
+  seq: 2
+}
+
+get {
+  url: https://geo-dev.meilleursagents.tech/geoapi/v2/geocode?place_types=addresses&address={{randomFRStreetName}}&city={{randomFRCity}}&postal_code={{randomFRZipCode}}&min_score=0.5&page=1&page_size=1
+  body: none
+  auth: none
+}
+
+query {
+  place_types: addresses
+  address: {{randomFRStreetName}}
+  city: {{randomFRCity}}
+  postal_code: {{randomFRZipCode}}
+  min_score: 0.5
+  page: 1
+  page_size: 1
+}
+
+headers {
+  accept: application/json
+}
+
+script:post-response {
+  const data = res.getBody();
+  
+  if (data[0] == undefined) {
+      bru.setNextRequest(null);
+  } else {
+    const randomLegacyAddressId = data[0].id;  
+    bru.setVar("legacyAddressId", randomLegacyAddressId);
+  }
+  
+  
+  
+  
+  
+}
+
+tests {
+  test("should return 200", function() {
+    const data = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+  });
+   
+  test("should contains at least one address", function() {
+    const data = res.getBody();
+    expect(data).to.have.lengthOf.above(0, 'At least one result is expected.')
+    expect(data[0].type).to.equal('address', 'The first result must be of type address');
+    expect(data[0].id).to.be.a('number', 'The ID sould be a number')
+  });
+}
