@@ -1,0 +1,38 @@
+meta {
+  name: RandomFRLocationSL
+  type: http
+  seq: 1
+}
+
+get {
+  url: https://www.generatormix.com/random-address-in-france?number=1
+  body: none
+  auth: none
+}
+
+query {
+  number: 1
+}
+
+script:post-response {
+  setVarsFromGeneratormixResponse();
+}
+
+tests {
+  const html = parse(data);
+  
+  test("should have a street in response", function() {
+    const street = getAddressElementFromTag(html, 'Street:');
+    expect(street, 'Street value in HTML').to.not.be.undefined;
+  });
+  
+  test("should have a town in response", function() {
+    const town = getAddressElementFromTag(html, 'Town:');
+    expect(town, 'Town value in HTML').to.not.be.undefined;
+  });
+  
+  test("should have a zipCode in response", function() {
+    const zipCode = getAddressElementFromTag(html, 'Postcode:');
+    expect(zipCode, 'Postcode value in HTML').to.not.be.undefined;
+  });
+}

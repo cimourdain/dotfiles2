@@ -1,6 +1,8 @@
 script:pre-request {
   const {faker} = require('@faker-js/faker');
   
+  
+  // faker variables
   const estimationId = faker.datatype.uuid();
   bru.setVar('estimationId', estimationId);
   
@@ -19,15 +21,90 @@ script:pre-request {
   const livingSurface = faker.number.int({ min: 0, max: 10000 });
   bru.setVar('livingSurface', livingSurface);
   
-  const testReturn200 = () => {
-    const data = res.getBody();
-    expect(res.getStatus()).to.equal(200);
+  
+  
+  
+  
+}
+
+script:post-response {
+  const { parse } = require('node-html-parser');
+  const {faker} = require('@faker-js/faker');
+  
+  // common functions
+  function getAddressElementFromTag(html, textStarsWith) {
+    const addressElementTag = html
+      .getElementsByTagName('p')
+      .find((tag) => tag.textContent.startsWith(textStarsWith));
+      if(addressElementTag == undefined){
+        return undefined;
+      }
+      const addressElementValue = addressElementTag.rawText.split(':')[1].trim();
+      return addressElementValue;
   }
   
+  function getAddressFromGeneratormixResponse() {
+    const data = res.getBody();
+    const html = parse(data);
+    const address = getAddressElementFromTag(html, 'Street:');
+    const city = getAddressElementFromTag(html, 'Town:');
+    const zipCode = getAddressElementFromTag(html, 'Postcode:');
+    
+    return {
+      address, city, zipCode
+    }
+  }
+  
+  function setVarsFromGeneratormixResponse(){
+    const response = getAddressFromGeneratormixResponse();
+    if (!response.address || !response.city || !response.zipCode ) {
+      bru.setNextRequest(null);
+      return
+    }
+    
+    bru.setVar("address", encodeURI(response.address));
+    bru.setVar("city", encodeURI(response.city));
+    bru.setVar("zipCode", encodeURI(response.zipCode));
+    return
+  }
+}
+
+tests {
+  // imports
+  const { parse } = require('node-html-parser');
+  
+  // common vars
+  const data = res.getBody();
+  
+  // common functions
   const testRecoHasAgenciesCount = (count) => {
     const data = res.getBody();
     expect(data).have.property('agencies');
-    expect(data.agencies).with.lengthOf(count);
+    expect(data.agencies).to.have.lengthOf.above((count - 1), `Less than ${count} agencies in response, it is suspicious`);
   }
+  
+  function getAddressElementFromTag(html, textStarsWith) {
+    const addressElementTag = html
+      .getElementsByTagName('p')
+      .find((tag) => tag.textContent.startsWith(textStarsWith));
+      if(addressElementTag == undefined){
+        return undefined;
+      }
+      const addressElementValue = addressElementTag.rawText.split(':')[1].trim();
+      return addressElementValue;
+  }
+  
+  // common tests
+  test("should return 200", function() {  
+    const data = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  
+  
+  
+  
+  
+  
   
 }

@@ -1,23 +1,22 @@
 meta {
-  name: contactRequest-IWB
+  name: ContactRequest-EF-SL
   type: http
-  seq: 3
+  seq: 4
 }
 
 post {
-  url: {{BFF_URL}}/v1/contact_request/estimation_funnel
+  url: {{SPC_BFF_URL}}/v1/contact_request
   body: json
   auth: none
 }
 
 body:json {
   {
-    "legacyBrandId":"{{legacyBrandId}}", 
-    "brand":"IWB", 
-    "isTopPosition": {{isTopPosition}}, 
+    "soldPropertyId":"{{soldPropertyLegacyBrandId}}", 
+    "brand":"SL", 
     "context":"estimation_funnel",
     "estimation":{
-      "estimationId": "{{estimationId}}",
+      "estimationId":"{{estimationId}}",
       "prices":{
         "avg": {{price}},
         "max": {{priceMax}},
@@ -48,28 +47,30 @@ body:json {
         "hasABalconyOrTerrace":true,
         "propertyCondition":"Nice",
         "propertySubType":"Apartment",
-        "propertyType": "{{propertyType}}"
+        "propertyType":"{{propertyType}}"
       },
       "localization":{
-        "city":"Charleroi",
+        "city": "{{city}}",
         "coordinates":{
-          "lat":51.2593008,
-          "lng":4.79091201
+          "lat":51.2593008591088,
+          "lng":4.79091201914399
         },
-        "zipCode":"{{BEZipCode}}"
+        "zipCode": "{{zipCode}}"
       }
     }
   }
 }
 
 script:pre-request {
-  const isTopPosition = faker.datatype.boolean();
-  bru.setVar('isTopPosition', isTopPosition);
-}
-
-tests {
-  test("should return 200", function() {
-    const data = res.getBody();
-    expect(res.getStatus()).to.equal(200);
-  });
+  if (!bru.getVar('soldPropertyLegacyBrandId')){
+    bru.setVar('soldPropertyLegacyBrandId', 2258636)
+  }
+  
+  if (!bru.getVar('city')){
+    bru.setVar('city', 'Charleroi')
+  }
+  
+  if (!bru.getVar('zipCode')){
+    bru.setVar('zipCode', '6030')
+  }
 }

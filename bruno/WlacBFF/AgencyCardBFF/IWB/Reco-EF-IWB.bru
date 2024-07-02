@@ -1,0 +1,58 @@
+meta {
+  name: Reco-EF-IWB
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{WLAC_BFF_URL}}/v1/recommendation/estimation_funnel/IWB?estimationId={{estimationId}}&lat=51.2593008591088&lng=4.79091201914399&price={{price}}&propertyType={{propertyType}}&zipCode={{zipCode}}
+  body: none
+  auth: none
+}
+
+query {
+  estimationId: {{estimationId}}
+  lat: 51.2593008591088
+  lng: 4.79091201914399
+  price: {{price}}
+  propertyType: {{propertyType}}
+  zipCode: {{zipCode}}
+  ~activeLanguage: {{activeLanguage}}
+}
+
+script:pre-request {
+  if (!bru.getVar('zipCode')){
+    bru.setVar('zipCode', '6030')
+  }
+}
+
+script:post-response {
+  if (res.getStatus() != 200 ) {
+      bru.setNextRequest(null);
+      return
+  } else {
+      // select a random agency from response to set legacyBrandId for following contact request
+    const data = res.getBody();
+    const agenciesCount = (data.agencies.length - 1)
+    const randomAgencyIndex = faker.number.int({ min: 0, max: agenciesCount }) ;
+    const randomLIAgencyLegacyId = data.agencies[randomAgencyIndex].legacyBrandId;
+    bru.setVar("legacyBrandId", randomLIAgencyLegacyId);
+  }
+  
+  
+}
+
+tests {
+  test("should contains a list with more of 20 agencies", function() {
+    // const data = res.getBody();
+    // expect(data).have.property('agencies');
+    // expect(data.agencies).to.have.lengthOf.above(19, 'Less than 20 agencies in response, it is suspicious');
+    testRecoHasAgenciesCount(20);
+  });
+  
+  test("should have a topPosition agency as first result", function() {
+    // const data = res.getBody();
+    expect(data).have.property('agencies');
+    expect(data.agencies[0].isTopPosition).to.equal(true);
+  });
+}

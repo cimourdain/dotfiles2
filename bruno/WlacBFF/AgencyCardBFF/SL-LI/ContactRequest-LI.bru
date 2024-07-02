@@ -1,11 +1,11 @@
 meta {
-  name: ContactRequest-SL
+  name: ContactRequest-LI
   type: http
-  seq: 4
+  seq: 6
 }
 
 post {
-  url: {{BFF_URL}}/v1/contact_request/estimation_funnel
+  url: {{WLAC_BFF_URL}}/v1/contact_request/estimation_funnel
   body: json
   auth: none
 }
@@ -13,7 +13,7 @@ post {
 body:json {
   {
     "legacyBrandId":"{{legacyBrandId}}", 
-    "brand":"SL", 
+    "brand":"LI", 
     "context":"estimation_funnel",
     "estimation":{
       "estimationId":"{{estimationId}}",
@@ -50,14 +50,28 @@ body:json {
         "propertyType":"{{propertyType}}"
       },
       "localization":{
-        "city": "Paris",
+        "city": "{{city}}",
           "coordinates": {
             "lat": 48.872681891644,
             "lng": 2.3114737763566
           },
-          "zipCode": "75008"
+          "zipCode": "{{zipCode}}"
       }
     }
+  }
+}
+
+script:pre-request {
+  if (!bru.getVar('legacyBrandId')){
+    bru.setVar('legacyBrandId', '81763')
+  }
+  
+  if (!bru.getVar('city')){
+    bru.setVar('city', 'Paris')
+  }
+  
+  if (!bru.getVar('zipCode')){
+    bru.setVar('zipCode', '75018')
   }
 }
 
