@@ -23,7 +23,7 @@ pso = !git push origin $(git rev-parse --abbrev-ref HEAD)
 plo = !git pull origin $(git rev-parse --abbrev-ref HEAD)
 pushf = !git pso --force-with-lease
 rst = !git reset --hard && git clean -f -d
-
+oups = !git add . && git cma && git pushf
 
 [color]
 ui = auto
