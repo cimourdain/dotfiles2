@@ -288,6 +288,16 @@ function init_gcloud {
 }
 
 
+
+################
+# TFEnv
+################
+function init_tfenv {
+    echo "Add current user to TfEnv"
+    sudo usermod -a -G tfenv ${USER}
+}
+
+
 ################
 # MAIN
 ################
@@ -309,6 +319,7 @@ function restore {
 
 function init {
     init_gcloud
+    init_tfenv
 }
 
 # Check if the function exists (bash specific)

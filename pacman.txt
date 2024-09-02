@@ -56,7 +56,8 @@ pnpm
 nvm
 
 # infra
-terraform
+# terraform
+tfenv
 
 ### C# for Unity
 #dotnet-runtime
