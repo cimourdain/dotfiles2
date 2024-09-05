@@ -35,4 +35,7 @@ prune = true
 autosquash = true
 
 [pull]
-  rebase = true
+rebase = true
+
+[init]
+	defaultBranch = main
