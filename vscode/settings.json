@@ -128,5 +128,6 @@
   "!Select sequence",
   "!Split",
   "!Split sequence"
-]
+],
+"editor.minimap.enabled": false
 }
