@@ -1,0 +1,20 @@
+#!/bin/bash
+
+function nords {
+    country=${1:-netherlands}
+	sudo systemctl start nordvpnd.service
+    # required ?
+    # sudo systemctl start systemd-resolved.service
+    echo "check that 'nameserver 8.8.8.8' is in resolv.conf"
+    cat /etc/resolv.conf
+    nordvpn login
+
+    echo "Type any key to continue after login"
+    read _
+    nordvpn connect ${country}
+}
+
+function nordk {
+    nordvpn disconnect
+    sudo systemctl stop nordvpnd.service
+}
