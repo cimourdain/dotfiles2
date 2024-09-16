@@ -281,10 +281,13 @@ function restore_starship {
 # GCLOUD
 ################
 function init_gcloud {
-    gcloud init
+    # gcloud init
     gcloud auth application-default login
     gcloud auth configure-docker
     gcloud components install gke-gcloud-auth-plugin
+
+    # https://stackoverflow.com/questions/59148598/how-to-get-gcloud-auth-docker-helper-out-of-the-habit-to-hook-into-non-related-d
+    jq -c '.credHelpers."gcr.io" = "gcr", .credHelpers."eu.gcr.io" = "gcr"' ${HOME}/.docker/config.json > ${HOME}/.docker/tmp.$$.json && mv ${HOME}/.docker/tmp.$$.json ${HOME}/.docker/config.json
 }
 
 
