@@ -6,22 +6,23 @@
 # $ warp-cli registration new
 # $ warp-cli teams-enroll aviv-group
 
-# function is_in_activation {
-#     activation=$(systemctl status "$1" | grep "Active: active (running)" )
-#     if [ -z "$activation" ]; then
-#         true;
-#     else
-#         false;
-#     fi
 
-#     return $?;
-# }
+CLOUDFLARE_SERVICE_NAME=warp-svc
 
 function cfs {
-    sudo systemctl start warp-svc
+    sudo systemctl start ${CLOUDFLARE_SERVICE_NAME}
+    echo "⏰ Wait for service ${CLOUDFLARE_SERVICE_NAME} to start"
+    while true; do
+        if [ $(systemctl is-active ${CLOUDFLARE_SERVICE_NAME}) == "active" ]; then
+            break
+        fi
+        sleep 1
+    done
+
+    echo "👧 Connect"
     warp-cli connect
 }
 
 function cfk {
-    sudo systemctl stop warp-svc
+    sudo systemctl stop ${CLOUDFLARE_SERVICE_NAME}
 }
