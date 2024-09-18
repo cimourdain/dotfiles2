@@ -18,6 +18,9 @@ noto-fonts-emoji
 firefox-developer-edition
 ungoogled-chromium-bin
 
+# Network
+nordvpn-bin
+
 # DEV
 ## tools
 alacritty
@@ -25,7 +28,7 @@ bash-completion
 docker
 docker-compose
 # httptoolkit (electron dependency)
-bruno-bin
+# bruno-bin
 starship
 tmux
 postgresql
