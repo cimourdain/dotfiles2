@@ -1,20 +1,58 @@
 #!/bin/bash
 
+current_dir=$(dirname $(realpath ${HOME}/.bashrc))
+source "${current_dir}/tools/common"
+
+function ensure_public_dns {
+    local dns=${1:-"8.8.8.8"}
+    local nameserver_string="nameserver ${dns}"
+    local resolv_conf_path="/etc/resolv.conf"
+
+    if ! string_is_in_file "${nameserver_string}" "${resolv_conf_path}" ; then
+        echo >&2 "👷 Add ${nameserver_string} to ${resolv_conf_path}"
+        sudo bash -c "echo -e '\n${nameserver_string}' >> ${resolv_conf_path}"
+    fi
+
+    echo >&2 "👓 Review the content of ${resolv_conf_path}"
+    cat ${resolv_conf_path}
+}
+
 function nords {
-    country=${1:-netherlands}
-	sudo systemctl start nordvpnd.service
+    local country=${1:-netherlands}
+    local nordvpn_group_name="nordvpn"
+    local service_name="nordvpnd.service"
+
+    if id -nG "${USER}" | grep -qw "${nordvpn_group_name}"; then
+        echo >&2 "$USER belongs to ${nordvpn_group_name}"
+    else
+        echo >&2 "💥 $USER does not belong to ${nordvpn_group_name}"
+        return 1
+    fi
+
+    echo >&2 "🚀 Start nordvpnd.service"
+    start_service ${service_name}
     # required ?
     # sudo systemctl start systemd-resolved.service
-    echo "check that 'nameserver 8.8.8.8' is in resolv.conf"
-    cat /etc/resolv.conf
-    nordvpn login
 
-    echo "Type any key to continue after login"
-    read _
+
+    local account_cmd_response=$(nordvpn account)
+    if [ "$account_cmd_response" == "You are not logged in." ]; then
+        echo >&2 "😇 Login (${is_logged_in})"
+        nordvpn login
+
+        echo >&2 "Re-run this command when you are logged in"
+        return 1
+    fi
+
+    echo >&2 "👻 Connect to ${country}"
     nordvpn connect ${country}
+
+    ensure_public_dns
 }
 
 function nordk {
+    echo >&2 "👋 Disconnect"
     nordvpn disconnect
+    echo >&2 "💀 Stop NordVPN service"
     sudo systemctl stop nordvpnd.service
 }

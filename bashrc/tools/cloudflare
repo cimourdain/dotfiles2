@@ -6,18 +6,16 @@
 # $ warp-cli registration new
 # $ warp-cli teams-enroll aviv-group
 
+current_dir=$(dirname $(realpath ${HOME}/.bashrc))
+source "${current_dir}/tools/common"
 
 CLOUDFLARE_SERVICE_NAME=warp-svc
 
 function cfs {
-    sudo systemctl start ${CLOUDFLARE_SERVICE_NAME}
-    echo "⏰ Wait for service ${CLOUDFLARE_SERVICE_NAME} to start"
-    while true; do
-        if [ $(systemctl is-active ${CLOUDFLARE_SERVICE_NAME}) == "active" ]; then
-            break
-        fi
-        sleep 1
-    done
+    start_service${CLOUDFLARE_SERVICE_NAME}
+
+    echo "⏰ Wait for Daemon ${CLOUDFLARE_SERVICE_NAME} to start"
+    sleep 2
 
     echo "👧 Connect"
     warp-cli connect
