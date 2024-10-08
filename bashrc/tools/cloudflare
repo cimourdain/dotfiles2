@@ -12,7 +12,7 @@ source "${current_dir}/tools/common"
 CLOUDFLARE_SERVICE_NAME=warp-svc
 
 function cfs {
-    start_service${CLOUDFLARE_SERVICE_NAME}
+    start_service ${CLOUDFLARE_SERVICE_NAME}
 
     echo "⏰ Wait for Daemon ${CLOUDFLARE_SERVICE_NAME} to start"
     sleep 2
