@@ -22,8 +22,10 @@ cma = commit --amend --no-edit
 pso = !git push origin $(git rev-parse --abbrev-ref HEAD)
 plo = !git pull origin $(git rev-parse --abbrev-ref HEAD)
 pushf = !git pso --force-with-lease
-rst = !git reset --hard && git clean -f -d
+# rst = !git reset --hard && git clean -f -d
 oups = !git add . && git cma && git pushf
+rebasemain=!git rebase -i (git rev-parse origin/$(git remote show origin | sed -n '/HEAD branch/s/.*: //p'))
+cleanall = !git reset --hard && git clean -f -d && git co $(git remote show origin | sed -n '/HEAD branch/s/.*: //p') && git plo && git fetch
 
 [color]
 ui = auto
