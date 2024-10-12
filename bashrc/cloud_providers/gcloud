@@ -2,6 +2,74 @@
 
 GCLOUD_FOLDER_PATH="${HOME}/google-cloud-sdk/"
 
+function gcloud_login {
+    echo >&2 "# 👽 Check Gcloud login"
+    local is_logged="$(gcloud auth list --filter=status:ACTIVE --format json)"
+
+    if [ "${is_logged}" == "[]" ];then
+        echo  >&2 "🔑 Login to Gcloud"
+        gcloud auth login
+        gcloud auth application-default login
+    else
+        echo  >&2 "😇 You are already logged"
+    fi
+}
+
+function gcloud_config_docker {
+    echo >&2 "# 🐳  Check Gcloud Docker configuration"
+    local docker_config_file_path="${HOME}/.docker/config.json"
+
+    if [ ! -f "${docker_config_file_path}" ];then
+        echo >&2 "👷 Configure Docker"
+        gcloud auth configure-docker
+    fi
+
+    local curentGcrIOCredential=$(jq '.credHelpers."gcr.io"' "${docker_config_file_path}")
+    local curentEUGcrIOCredential=$(jq '.credHelpers."eu.gcr.io"' "${docker_config_file_path}")
+
+    if [[ "${curentGcrIOCredential}" != "\"gcr\"" ||  "${curentEUGcrIOCredential}" != "\"gcr\"" ]];then
+        echo >&2 "👷 Create a tmp file with expected docker config"
+        jq -c '.credHelpers."gcr.io" = "gcr" | .credHelpers."eu.gcr.io" = "gcr"' "${docker_config_file_path}" > ${HOME}/.docker/tmp.config.json
+        cat "${HOME}/.docker/tmp.config.json"
+
+        echo >&2 "👷 Update docker config file"
+        mv ${HOME}/.docker/tmp.config.json "${docker_config_file_path}"
+    else
+        echo >&2 "✅ The docker config file seems ok."
+    fi
+
+    echo >&2 "👓 Check docker configuration"
+    cat "${docker_config_file_path}"  | jq --color-output
+}
+
+function gloud_install_components {
+    echo >&2 "# 🏢 Check Gcloud installed components ${component}"
+    ## declare an array variable
+    declare -a required_components=("gke-gcloud-auth-plugin")
+
+    ## now loop through the above array
+    for component in "${required_components[@]}"
+    do
+        installed_components="$(gcloud components list --only-local-state --format json | jq ".[] | .id")"
+
+        if [[ "${installed_components}" != *"${component}"* ]];then
+            echo >&2 "👷 Install component ${component}"
+            gcloud components install "${component}"
+        else
+            echo >&2 "😇 Component ${component} is already installed"
+        fi
+    done
+
+    echo >&2 "👓 Installed components"
+    echo >&2 "$(gcloud components list --only-local-state --format json | jq ".[] | .id")"
+}
+
+function gcloud_config {
+    gcloud_login
+    gloud_install_components
+    gcloud_config_docker
+}
+
 if [ -d "$GCLOUD_FOLDER_PATH" ];
 then
     # prevent using python 3.10
@@ -14,6 +82,6 @@ then
 
     # The next line enables shell command completion for gcloud.
     if [ -f "${HOME}/google-cloud-sdk/completion.bash.inc" ]; then . "${HOME}/google-cloud-sdk/completion.bash.inc"; fi
-else 
+else
     echo "[INFO]Gcloud not found in ${GCLOUD_FOLDER_PATH}"
 fi

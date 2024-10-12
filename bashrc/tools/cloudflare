@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Install
 # $ yay -S cloudflare-warp-bin
@@ -9,16 +9,58 @@
 current_dir=$(dirname $(realpath ${HOME}/.bashrc))
 source "${current_dir}/tools/common"
 
-CLOUDFLARE_SERVICE_NAME=warp-svc
+
+
+function verify_cloudflare_docker_config {
+    echo "🐳 Check Docker configuration"
+
+    local docker_daemon_config_file_path="/etc/docker/daemon.json"
+    local expected_docker_daemon_json="$(cat <<EOF
+{
+    "default-address-pools":
+    [
+        {"base":"192.168.254.0/24","size":28, "mtu": 1420}
+    ],
+    "dns": ["8.8.8.8", "1.1.1.1"]
+}
+EOF
+    )"
+
+    local expected_docker_config=$(jq --sort-keys '.' <<< "${expected_docker_daemon_json}")
+
+
+    local diff=$(diff <(echo "${expected_docker_config}") <(jq --sort-keys . "${docker_daemon_config_file_path}" ))
+
+    if [ "${diff}" != "" ];then
+        echo >&2 "⚠️ The ${docker_daemon_config_file_path} file does not comply with the expected configuration"
+
+        echo >&2 "Differences found are: "
+        echo >&2 "${diff}"
+
+        echo >&2 "💡 Expected ${docker_daemon_config_file_path} content: "
+        echo >&2 "${expected_docker_daemon_json}"
+    else
+        echo >&2 "✅ The ${docker_daemon_config_file_path} comply with the expected configuration"
+    fi
+}
 
 function cfs {
+    CLOUDFLARE_SERVICE_NAME=warp-svc
+
     start_service ${CLOUDFLARE_SERVICE_NAME}
 
     echo "⏰ Wait for Daemon ${CLOUDFLARE_SERVICE_NAME} to start"
     sleep 2
 
-    echo "👧 Connect"
-    warp-cli connect
+    local warp_cli_settings=$(warp-cli settings)
+    if [ "$?" != "0" ];then
+        echo >&2 "👧 Connect"
+        warp-cli connect
+    else
+        echo >&2 "✅ Warp Client already connected"
+    fi
+
+    verify_cloudflare_docker_config
 }
 
 function cfk {
