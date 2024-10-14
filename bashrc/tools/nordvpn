@@ -2,20 +2,7 @@
 
 current_dir=$(dirname $(realpath ${HOME}/.bashrc))
 source "${current_dir}/tools/common"
-
-function ensure_public_dns {
-    local dns=${1:-"8.8.8.8"}
-    local nameserver_string="nameserver ${dns}"
-    local resolv_conf_path="/etc/resolv.conf"
-
-    if ! string_is_in_file "${nameserver_string}" "${resolv_conf_path}" ; then
-        echo >&2 "👷 Add ${nameserver_string} to ${resolv_conf_path}"
-        sudo bash -c "echo -e '\n${nameserver_string}' >> ${resolv_conf_path}"
-    fi
-
-    echo >&2 "👓 Review the content of ${resolv_conf_path}"
-    cat ${resolv_conf_path}
-}
+source "${current_dir}/tools/dns"
 
 function nords {
     local country=${1:-netherlands}
@@ -47,12 +34,17 @@ function nords {
     echo >&2 "👻 Connect to ${country}"
     nordvpn connect ${country}
 
-    ensure_public_dns
+    echo >&2 "🔀 Use google DNS"
+    set_dns "google"
 }
 
 function nordk {
-    echo >&2 "👋 Disconnect"
-    nordvpn disconnect
+    # echo >&2 "👋 Disconnect"
+    # nordvpn disconnect
+
     echo >&2 "💀 Stop NordVPN service"
     sudo systemctl stop nordvpnd.service
+
+    echo >&2 "🔀 Reset DNS to default"
+    set_dns
 }

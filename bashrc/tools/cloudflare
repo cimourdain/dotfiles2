@@ -8,11 +8,15 @@
 
 current_dir=$(dirname $(realpath ${HOME}/.bashrc))
 source "${current_dir}/tools/common"
+source "${current_dir}/tools/dns"
 
+# Start cloudFlare
+CLOUDFLARE_SERVICE_NAME=warp-svc
 
 
 function verify_cloudflare_docker_config {
-    echo "🐳 Check Docker configuration"
+    echo >&2 "🐳 Check Docker configuration"
+    echo >&2 "💡https://avivgroup.atlassian.net/wiki/x/nYCOLw"
 
     local docker_daemon_config_file_path="/etc/docker/daemon.json"
     local expected_docker_daemon_json="$(cat <<EOF
@@ -45,11 +49,9 @@ EOF
 }
 
 function cfs {
-    CLOUDFLARE_SERVICE_NAME=warp-svc
-
     start_service ${CLOUDFLARE_SERVICE_NAME}
 
-    echo "⏰ Wait for Daemon ${CLOUDFLARE_SERVICE_NAME} to start"
+    echo >&2 "⏰ Wait for Daemon ${CLOUDFLARE_SERVICE_NAME} to start"
     sleep 2
 
     local warp_cli_settings=$(warp-cli settings)
@@ -61,8 +63,15 @@ function cfs {
     fi
 
     verify_cloudflare_docker_config
+
+    echo >&2 "🔀 Use Cloudflare DNS"
+    set_dns "cloudflare"
 }
 
 function cfk {
+    # Stop cloudFlare
     sudo systemctl stop ${CLOUDFLARE_SERVICE_NAME}
+
+    echo >&2 "🔀 Reset DNS to default"
+    set_dns
 }
