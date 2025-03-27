@@ -1,0 +1,16 @@
+#!/bin/bash
+
+
+function string_is_in_file {
+    local str=${1}
+    local filepath=${2}
+
+    echo >&2 "👓 check that '${str}' is in ${filepath}"
+    if grep -Fxq "$str" ${filepath}
+    then
+        echo >&2 "✅ ${str} is in ${filepath}"
+        return 0
+    else
+        return 1
+    fi
+}

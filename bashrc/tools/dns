@@ -5,13 +5,14 @@ function update_connexion_dns_config {
     local expected_dns="${2}"
 
     local expected_dns_arr=$(echo $expected_dns | tr " " "\n")
+    local reboot_required="0"
 
     local reboot_required="0"
     echo >&2 "👓 Update DNS Settings if required for connection ${connection_name} to use DNS ${expected_dns}"
     while read -r connection_settings_line
     do
-        key=$(echo $connection_settings_line | cut -d':' -f1)
-        value=$(echo $connection_settings_line | cut -d':' -f2)
+        key=$(echo "$connection_settings_line" | cut -d':' -f1)
+        value=$(echo "$connection_settings_line" | cut -d':' -f2)
 
         if [[ "${key}" == "ipv6.ignore-auto-dns" && ${value} != "yes" ]];then
             echo -e >&2 "\t 👷 Update ipv6.ignore-auto-dns settings because current value is ${value} and we expect yes"
@@ -35,10 +36,17 @@ function update_connexion_dns_config {
             fi
         fi
 
+<<<<<<< HEAD
     done < <(nmcli -t con show "${connection_name}" | grep -E 'ipv4.dns:|ipv4.ignore-auto-dns:|ipv6.ignore-auto-dns:')
 
     if [ "${reboot_required}" == "1" ];then
         echo -e >&2 "\t 🚀 Restart connection ${connection_name}"
+=======
+    done
+
+    if [ "${reboot_required}" == "1" ];then
+        echo >&2 "👷 Restart connection ${connection_name}"
+>>>>>>> 5c9c553 (fix: bashrc imports)
         nmcli con down "${connection_name}"
         nmcli con up "${connection_name}"
     fi

@@ -1,7 +1,12 @@
 #!/bin/bash
 
+############################
+# SystemCtl Services Utils
+############################
 function service_is_active {
-    if [ $(systemctl is-active ${service_name}) == "active" ]; then
+    local service_name
+    service_name=${1}
+    if [ "$(systemctl is-active "${service_name}")" == "active" ]; then
         return 0
     fi
     return 1
@@ -25,19 +30,4 @@ function start_service {
     fi
 
     return 0
-}
-
-
-function string_is_in_file {
-    local str=${1}
-    local filepath=${2}
-
-    echo >&2 "👓 check that '${str}' is in ${filepath}"
-    if grep -Fxq "$str" ${filepath}
-    then
-        echo >&2 "✅ ${str} is in ${filepath}"
-        return 0
-    else
-        return 1
-    fi
 }

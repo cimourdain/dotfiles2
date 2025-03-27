@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Install
 # $ yay -S cloudflare-warp-bin
@@ -7,48 +7,96 @@
 # $ warp-cli teams-enroll aviv-group
 
 current_dir=$(dirname $(realpath ${HOME}/.bashrc))
-source "${current_dir}/tools/common"
 source "${current_dir}/tools/dns"
 
 # Start cloudFlare
 CLOUDFLARE_SERVICE_NAME=warp-svc
 
-
-function verify_cloudflare_docker_config {
-    echo >&2 "🐳 Check Docker configuration"
-    echo >&2 "💡https://avivgroup.atlassian.net/wiki/x/nYCOLw"
-
-    local docker_daemon_config_file_path="/etc/docker/daemon.json"
-    local expected_docker_daemon_json="$(cat <<EOF
+CLOUDFLARE_DOCKER_DAEMON_JSON="$(cat <<EOF
 {
     "default-address-pools":
     [
         {"base":"192.168.254.0/24","size":28, "mtu": 1420}
     ],
-    "dns": ["8.8.8.8", "1.1.1.1"]
+    "dns": ["1.1.1.1", "1.0.0.1"]
 }
 EOF
-    )"
+)"
 
-    local expected_docker_config=$(jq --sort-keys '.' <<< "${expected_docker_daemon_json}")
+# "default-address-pools":
+# [
+#     {
+#         "base" : "172.17.0.0/12",
+#         "size" : 16
+#     },
+#     {
+#         "base" : "192.168.0.0/16",
+#         "size" : 20
+#     }
+# ]
+DEFAULT_DOCKER_DAEMON_JSON="$(cat <<EOF
+{}
+EOF
+)"
 
 
-    local diff=$(diff <(echo "${expected_docker_config}") <(jq --sort-keys . "${docker_daemon_config_file_path}" ))
+# function verify_cloudflare_docker_config {
+#     echo >&2 "🐳 Check Docker configuration"
+#     echo >&2 "💡https://avivgroup.atlassian.net/wiki/x/nYCOLw"
 
-    if [ "${diff}" != "" ];then
-        echo >&2 "⚠️ The ${docker_daemon_config_file_path} file does not comply with the expected configuration"
+#     local docker_daemon_config_file_path="/etc/docker/daemon.json"
+#     local expected_docker_daemon_json="$(cat <<EOF
+# {
+#     "default-address-pools":
+#     [
+#         {"base":"192.168.254.0/24","size":28, "mtu": 1420}
+#     ],
+#     "dns": ["8.8.8.8", "1.1.1.1"]
+# }
+# EOF
+#     )"
 
-        echo >&2 "Differences found are: "
-        echo >&2 "${diff}"
+#     local expected_docker_config=$(jq --sort-keys '.' <<< "${expected_docker_daemon_json}")
 
-        echo >&2 "💡 Expected ${docker_daemon_config_file_path} content: "
-        echo >&2 "${expected_docker_daemon_json}"
-    else
-        echo >&2 "✅ The ${docker_daemon_config_file_path} comply with the expected configuration"
-    fi
+#     local diff=$(diff <(echo "${expected_docker_config}") <(jq --sort-keys . "${docker_daemon_config_file_path}" ))
+
+#     if [ "${diff}" != "" ];then
+#         echo >&2 "⚠️ The ${docker_daemon_config_file_path} file does not comply with the expected configuration"
+
+#         echo >&2 "Differences found are: "
+#         echo >&2 "${diff}"
+
+#         echo >&2 "💡 Expected ${docker_daemon_config_file_path} content: "
+#         echo >&2 "${expected_docker_daemon_json}"
+#     else
+#         echo >&2 "✅ The ${docker_daemon_config_file_path} comply with the expected configuration"
+#     fi
+# }
+
+update_docker_configuration() {
+    echo >&2 "🐳 Update Docker configuration"
+    echo >&2 "💡https://avivgroup.atlassian.net/wiki/x/nYCOLw"
+
+    local docker_daemon_config="${1}"
+
+    echo >&2 "👷 Update /etc/docker/daemon.json file"
+    echo "${docker_daemon_config}" | sudo tee /etc/docker/daemon.json
+
+    echo >&2 "👓 Verify the content of the daemon config file"
+    cat /etc/docker/daemon.json
+
+    echo >&2 "🚓 Stop all docker containers"
+    docker stop "$(docker ps -a -q)"
+	docker rm "$(docker ps -a -q)"
+
+    echo >&2 "💀 Delete docker networks"
+    docker network prune
+
+    echo >&2 "🚀 Restart docker service"
+    sudo systemctl restart docker.service
 }
 
-function cfs {
+cfs() {
     start_service ${CLOUDFLARE_SERVICE_NAME}
 
     echo >&2 "⏰ Wait for Daemon ${CLOUDFLARE_SERVICE_NAME} to start"
@@ -62,16 +110,18 @@ function cfs {
         echo >&2 "✅ Warp Client already connected"
     fi
 
-    verify_cloudflare_docker_config
+    update_docker_configuration "${CLOUDFLARE_DOCKER_DAEMON_JSON}"
 
     echo >&2 "🔀 Use Cloudflare DNS"
     set_dns "cloudflare"
 }
 
-function cfk {
+cfk() {
     # Stop cloudFlare
     sudo systemctl stop ${CLOUDFLARE_SERVICE_NAME}
 
     echo >&2 "🔀 Reset DNS to default"
     set_dns
+
+    update_docker_configuration "${DEFAULT_DOCKER_DAEMON_JSON}"
 }

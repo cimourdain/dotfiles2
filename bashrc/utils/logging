@@ -1,0 +1,86 @@
+#!/bin/bash
+
+############################
+# Print Messages
+############################
+declare -rA DOTFILES_SETTINGS_FORMAT_COLORS=(
+    [reset]="$(tput sgr0)"
+    [black]="$(tput setaf 0)"
+    [red]="$(tput setaf 1)"
+    [green]="$(tput setaf 2)"
+    [yellow]="$(tput setaf 3)"
+    [blue]="$(tput setaf 4)"
+    [magenta]="$(tput setaf 5)"
+    [cyan]="$(tput setaf 6)"
+    [white]="$(tput setaf 7)"
+    [lime_yellow]="$(tput setaf 190)"
+    [powder_blue]="$(tput setaf 153)"
+)
+
+declare -rA DOTFILES_SETTINGS_LOG_LEVELS=(
+    ["VERBOSE"]="cyan"
+    ["DEBUG"]="powder_blue"
+    ["INFO"]="blue"
+    ["SUCCESS"]="green"
+    ["WARNING"]="lime_yellow"
+    ["ERROR"]="red"
+    ["CRITICAL"]="red"
+)
+DOTFILES_SETTINGS_DEFAULT_LOG_LEVEL="INFO"
+
+_build_log_message_printf_format () {
+    local log_level
+
+    # get input log level or use default
+    log_level=${1:-"${DOTFILES_SETTINGS_DEFAULT_LOG_LEVEL}"}
+    log_level=${log_level^^}
+
+    if [[ -z "${DOTFILES_SETTINGS_LOG_LEVELS[${log_level}]}" ]]
+    then
+        log_level="${DOTFILES_SETTINGS_DEFAULT_LOG_LEVEL}"
+    fi
+
+    local format_idx="${DOTFILES_SETTINGS_LOG_LEVELS[${log_level}]}"
+
+    
+
+    # shellcheck disable=SC2028
+    echo "${DOTFILES_SETTINGS_FORMAT_COLORS[${format_idx}]}%s${DOTFILES_SETTINGS_FORMAT_COLORS["reset"]}\n"
+}
+
+log () {
+    local message
+    local log_level
+
+    message=${1:-"Undefined Message"}
+    log_level=${2:"undefined"}
+
+    # print message
+    log_format="$(_build_log_message_printf_format "${log_level}")"
+    # shellcheck disable=SC2059
+    printf "${log_format}" "${message}"
+}
+
+log_critical () {
+    log "${1}" "CRITICAL"
+}
+
+log_error () {
+    log "${1}" "ERROR"
+}
+
+log_warning () {
+    log "${1}" "WARNING"
+}
+
+log_info () {
+    log "${1}" "INFO"
+}
+
+log_debug () {
+    log "${1}" "DEBUG"
+}
+
+log_verbose () {
+    log "${1}" "VERBOSE"
+}

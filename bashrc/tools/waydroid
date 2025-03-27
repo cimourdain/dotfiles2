@@ -1,0 +1,74 @@
+#!/bin/bash
+
+function wd-network {
+    require_root_execution
+
+    local required_ports
+    local required_interface
+
+    local trusted_ports
+    local forward_enabled
+    local enabled_interfaces
+
+
+    required_ports=("53" "67")
+    required_interface="waydroid0"
+
+    echo  >&2 "Allow Warydroid in Firewall"
+    echo  >&2 "https://wiki.archlinux.org/title/Waydroid#Network"
+
+    trusted_ports=$(firewall-cmd --list-ports --zone=trusted)
+    for required_port in  "${required_ports[@]}";do
+        if [[ $trusted_ports == *"${required_port}/udp"* ]]; then
+            echo >&2 "✅ Port ${required_port}/udp is allowed."
+        else
+            echo >&2 "Port ${required_port}/udp must be added allowed."
+            firewall-cmd --zone=trusted --add-port="${required_port}"/udp
+        fi
+    done
+
+    forward_enabled=$(firewall-cmd  --query-forward  --zone=trusted)
+    if [ ${forward_enabled} == "yes" ];then
+        echo >&2 "✅ Port forward is enabled."
+    else
+        echo >&2 "Enable port forward."
+        firewall-cmd --zone=trusted --add-forward
+    fi
+
+    enabled_interfaces=$(firewall-cmd  --list-interfaces  --zone=trusted)
+    if [[ $enabled_interfaces == *"${required_interface}"* ]]; then
+        echo >&2 "✅ Interface ${required_interface} is enabled."
+    else
+        echo >&2 "Enable interface ${required_interface}."
+        firewall-cmd --zone=trusted --add-interface="${required_interface}"
+    fi
+}
+
+function wd-docker-conflict {
+    require_root_execution
+
+    echo >&2 "Fix Internet Connexion"
+    if grep -q 'LXC_USE_NFT="false"' /usr/lib/waydroid/data/scripts/waydroid-net.sh
+    then
+        echo >&2 "LXC_USE_NFT value is valid"
+        return
+    fi
+    echo >&2 "LXC_USE_NFT value is invalid, expected to be false"
+    exit 1
+}
+
+function wd-start {
+    echo "start"
+    try "$(require_root_execution)"
+    echo "MUST NOT BE DISPLAYED FOR NON ROOT USERS"
+    # wd-network
+    # wd-docker-conflict
+    # systemctl restart waydroid-container
+    # waydroid session show-full-ui
+}
+
+function wd-stop {
+    waydroid session stop
+    systemctl stop waydroid-container
+
+}

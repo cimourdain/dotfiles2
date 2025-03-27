@@ -1,0 +1,17 @@
+#!/bin/bash
+
+is_user_root ()
+{
+    [ "${EUID:-$(id -u)}" -eq 0 ]
+}
+
+require_root_execution () {
+    local is_root
+    is_root=$(is_user_root)
+
+    if [ ! "${is_root}" ];then
+        log "🚨 This command requires root usage, retry with sudo" "error"
+        return 1
+    fi
+    return 0
+}

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+export COREPACK_ENABLE_AUTO_PIN=0

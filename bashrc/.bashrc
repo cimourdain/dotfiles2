@@ -91,6 +91,13 @@ eval "$(starship init bash)"
 
 # source subfiles
 current_dir=$(dirname $(realpath ${HOME}/.bashrc))
+## Script shared bash functions
+source "${current_dir}/utils/logging"
+source "${current_dir}/utils/script"
+source "${current_dir}/utils/permissions"
+source "${current_dir}/utils/systemctl"
+
+## Tools
 source "${current_dir}/tools/ssh"
 source "${current_dir}/tools/git"
 source "${current_dir}/cloud_providers/gcloud"
@@ -102,6 +109,8 @@ source "${current_dir}/tools/docker"
 source "${current_dir}/tools/n"
 source "${current_dir}/tools/nordvpn"
 source "${current_dir}/tools/nvm"
+source "${current_dir}/tools/pnpm"
+source "${current_dir}/tools/waydroid"
 # source "${current_dir}/dotnet"
 # source "${current_dir}/lang/golang"
 source "${current_dir}/lang/terraform"
@@ -114,3 +123,4 @@ source "${current_dir}/projects/wlac"
 # INTEL drivers
 # export LIBVA_DRIVER_NAME=iHD
 # export LIBVA_DRIVERS_PATH=/usr/lib/dri
+. "$HOME/.cargo/env"
