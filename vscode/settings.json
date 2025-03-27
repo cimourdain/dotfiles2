@@ -2,7 +2,7 @@
   // auto format on save
   "editor.formatOnSave": true,
   "files.autoSave": "afterDelay",
-  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.ignoreTrimWhitespace": true,
 
   // This matches the value configured on the autoformatter
   "editor.rulers": [80],
@@ -40,9 +40,21 @@
       "**/__pycache__": true
     }
   },
-  // PHP
+  // Terraform
+  "[terraform]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.tabSize": 2
+  },
+  "[terraform-vars]": {
+    "editor.tabSize": 2
+  },
+  // File Associations
   "files.associations": {
-    "*.inc": "php"
+    "*.inc": "php",
+    "*.hcl": "terraform",
+    "*.tf": "terraform",
+    "*.tf.override": "terraform"
   },
   // Markdown
   "[markdown]": {
@@ -129,5 +141,10 @@
   "!Split",
   "!Split sequence"
 ],
-"editor.minimap.enabled": false
+"editor.minimap.enabled": false,
+"markdown-preview-enhanced.previewTheme": "github-dark.css",
+"markdown-preview-enhanced.codeBlockTheme": "auto.css",
+"[dockerfile]": {
+  "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+}
 }
