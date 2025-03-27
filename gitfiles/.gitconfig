@@ -26,6 +26,7 @@ pushf = !git pso --force-with-lease
 oups = !git add . && git cma && git pushf
 rebasemain=!git rebase -i (git rev-parse origin/$(git remote show origin | sed -n '/HEAD branch/s/.*: //p'))
 cleanall = !git reset --hard && git clean -f -d && git co $(git remote show origin | sed -n '/HEAD branch/s/.*: //p') && git plo && git fetch
+rewrite = !git reset --soft $(git rev-parse origin/main) && git reset
 
 [color]
 ui = auto
