@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# NordVPN utilities
+#
+# Usage:
+#   nordvpn (start | stop)
+#   log -h | --help
+#   log -V | --version
+#
+# Arguments:
+#   start       start NordVPN
+#   stop        stop NordVPN
+#
+# Options:
+#   -h, --help      print help
+#   -V, --version   print version
+#
+# Examples:
+#   nordvpn start
+#   nordvpn stop
+#
+# ----
+# log 0.1.0

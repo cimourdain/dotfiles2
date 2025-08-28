@@ -1,0 +1,230 @@
+#!/usr/bin/env bash
+
+# Logging utility
+#
+# Usage:
+#   log [--level=L] [--color=N] [--emoji=E] [--date-fmt=D] MESSAGE
+#   log -h | --help
+#   log -V | --version
+#
+# Arguments:
+#   MESSAGE       message to log
+#
+# Options:
+#   -h, --help      print help
+#   -V, --version   print version
+#   -l, --level=L  log level [default: debug]
+#   -e, --emoji=E   Emoji to add as a prefix of the log message (from list of value or code from https://unicode.org/Public/emoji/16.0/)
+#   --date-fmt=D    Date format of your messages
+#
+# Examples:
+#   log "My message"
+#   log --date-fmt="[%Y-%m-%d]" --emoji="\U1F919" "My Super Message"
+#
+# ----
+# log 0.1.0
+
+echo >&2 "received args by log command: $@ ($#)"
+
+source "docopts.sh" --auto "$@"
+
+_is_int() {
+    echo $1 | grep "^-\?[0-9]+$"
+}
+
+############################
+# Global variables
+############################
+declare -A PRINTF_FORMAT_COLORS=(
+    [black]="$(tput setaf 0)"
+    [red]="$(tput setaf 1)"
+    [green]="$(tput setaf 2)"
+    [yellow]="$(tput setaf 3)"
+    [blue]="$(tput setaf 4)"
+    [magenta]="$(tput setaf 5)"
+    [cyan]="$(tput setaf 6)"
+    [white]="$(tput setaf 7)"
+    [lime_yellow]="$(tput setaf 190)"
+    [powder_blue]="$(tput setaf 153)"
+)
+PRINTF_FORMAT_COLOR_RESET=$(tput sgr0)
+
+
+######################################################
+#
+# LOG LEVEL
+#
+######################################################
+# Globals
+
+DEFAULT_LOG_LEVEL="INFO"
+declare -A LOG_LEVEL_COLOR=(
+    ["VERBOSE"]="cyan"
+    ["DEBUG"]="powder_blue"
+    ["INFO"]="blue"
+    ["SUCCESS"]="green"
+    ["WARNING"]="lime_yellow"
+    ["WARN"]="lime_yellow"
+    ["ERROR"]="red"
+    ["ERR"]="red"
+    ["CRITICAL"]="red"
+)
+LOG_LEVELS=${!LOG_LEVEL_COLOR[@]} # ("VERBOSE" "DEBUG" "INFO" "SUCCESS" "WARNING" "ERROR" "CRITICAL")
+
+
+#######################################
+# Resolve log level from input string.
+#
+# Globals:
+#   LOG_LEVELS
+#   DEFAULT_LOG_LEVEL
+# Arguments:
+#   $1 (string?) log level string
+# Outputs:
+#   (string) Resolved log level [value of LOG_LEVELS]
+#######################################
+_resolve_log_level () {
+    local input_log_level
+    input_log_level=${1:-"debug"}
+    input_log_level=${input_log_level^^}
+
+    if [[ ! "${LOG_LEVELS[*]}" =~ [[:space:]]${input_log_level}[[:space:]] ]]; then
+        # echo >&2 "${input_log_level} is not a valid log level from ${LOG_LEVELS[*]}"
+        echo "${DEFAULT_LOG_LEVEL}"
+        return 0
+    fi
+
+    # echo >&2 "${input_log_level} is a valid log level from ${LOG_LEVELS[*]}"
+    echo "${input_log_level}"
+}
+
+#######################################
+# Build printf format from log level argument.
+#
+# Globals:
+#   LOG_LEVEL_COLOR
+# Arguments:
+#   $1 (string?) log level argument
+# Outputs:
+#   (string) Resolved format string for printf
+#######################################
+_resolve_log_level_format() {
+    local current_format=${1:-"%s"}
+    local argument_received_log_level=${2}
+
+    local resolved_log_level=$(_resolve_log_level "${argument_received_log_level}")
+
+    local format_idx="${LOG_LEVEL_COLOR[${resolved_log_level}]}"
+    # shellcheck disable=SC2028
+    echo "${PRINTF_FORMAT_COLORS[${format_idx}]}${current_format}${PRINTF_FORMAT_COLOR_RESET}"
+}
+
+######################################################
+#
+# Emoji
+#
+######################################################
+# see https://unicode.org/Public/emoji/16.0/
+declare -A LOG_EMOJIS=(
+    ["SUCCESS"]="2705"   # ✅
+    ["FAIL"]="274C"      # ❌
+    ["WARNING"]="26A0"   # ⚠️
+    ["START"]="1F680"    # 🚀
+    ["KILL"]="1F480"     # 💀
+    ["UPDATE"]="267B"    # ♻️
+    ["REPAIR"]="1F527"   # 🔧
+    ["CLEAN"]="1F9F9"    # 🧹
+    ["TEST"]="1F9EA"     # 🧪
+    ["SECURE"]="1F512"   # 🔒
+    ["UNSECURE"]="1F513" # 🔒
+    ["SEND"]="1F4E9"     # 📩
+    ["CALL"]="260E"      # ☎️
+    ["SAVE"]="1F4BE"     # 💾
+    ["INSPECT"]="1F453"  # 👓
+    ["EXTRA"]="1F381"    # 🎁
+    ["WAIT"]="23F3"      # ⏳
+    ["BUILD"]="1F477"    # 👷
+)
+_resolve_emoji () {
+    local input_emoji
+    input_emoji=${1:-""}
+    local resolved_emoji
+
+    if [[ -z "${input_emoji}" ]];then
+        echo ""
+        return 0
+    fi
+
+    if [[ ! "${LOG_EMOJIS[*]}" =~ [[:space:]]${input_emoji^^}[[:space:]] ]]; then
+        echo >&2 "Emoji found in list : ${input_emoji^^}"
+        resolved_emoji="${LOG_EMOJIS[${input_emoji^^}]}"
+    else
+        echo >&2 "Emoji not found in list : ${input_emoji}"
+        resolved_emoji="${input_emoji}"
+    fi
+
+    # echo >&2 "Resolved emoji : ${resolved_emoji}"
+    resolved_formatted_emoji=$(printf "[%b]" "\U${resolved_emoji}")
+    echo "${resolved_formatted_emoji}"
+}
+
+_resolve_emoji_format() {
+    local current\=${1}
+    local argument_received_emoji=${2}
+
+    local resolved_emoji=$(_resolve_emoji "${argument_received_emoji}")
+    # echo >&2 "Resolved emoji format : ${resolved_emoji_format}"
+    echo "${resolved_emoji}${current}"
+    return 0
+}
+
+######################################################
+#
+# Date
+#
+######################################################
+_resolve_date () {
+    local input_date_format
+    input_date_format=${1:-""}
+
+    if [[ -n "${input_date_format}" ]];then
+        log_date=$(printf "%(${input_date_format})T" -1)
+        message="${log_date}${message}"
+    fi
+
+    echo ""
+}
+
+_resolve_date_format() {
+    local current_format=${1:-"%s"}
+    local argument_received_date_format=${2}
+
+    local resolved_date_format=$(_resolve_date "${argument_received_date_format}")
+
+    echo "${resolved_date_format}${current_format}"
+}
+
+############################
+# Main
+############################
+#### Required Arguments
+# Extract message from argument
+message=${ARGS["MESSAGE"]}
+
+#### Optional Arguments
+# Set message color
+# required_color="${ARGS["--color"]:-""}"
+required_log_level="${ARGS["--level"]}"
+required_emoji="${ARGS["--emoji"]:-""}"
+required_date_format="${ARGS["--date-fmt"]:-""}"
+
+
+#### Build printf format string
+format="%s"
+# format=$(_resolve_color_format "${format}" "${required_color}")
+format=$(_resolve_log_level_format "${format}" "${required_log_level}")
+format=$(_resolve_emoji_format "${format}" "${required_emoji}")
+format=$(_resolve_date_format "${format}" "${required_date_format}")
+
+#### Print message
+printf "${format}\n" "${message}"

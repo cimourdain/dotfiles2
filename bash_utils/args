@@ -1,0 +1,84 @@
+# #!/bin/bash
+
+
+# function read_args () {
+#     local args_json_spec_string
+#     args_json_spec_string=${1}
+#     log_debug "Read spec from ${args_json_spec_string}"
+#     local args
+#     args=("${@:2}")
+#     local args_count=${#args[@]}
+#     log_debug "Received args count (${args_count})"
+
+#     local json_spec
+#     json_spec=$(jq -n --argjson data "${args_json_spec_string}" '$data')
+
+#     local response_json='{"positional": []}'
+
+#     local arg_idx=0
+#     local max_idx=$((args_count -1))
+#     while [ $arg_idx -le $max_idx ]
+#     do
+#         log_debug "[${arg_idx}]${args[$arg_idx]}";
+#         arg_value="${args[$arg_idx]}"
+#         increment=1
+
+#         # Usecases
+#         #  --<string>
+#         #  --<string> <value>
+#         #  -<char>
+#         #  -<char> <value>
+#         #  -<char*>
+
+
+#         if [[ ${arg_value} =~ ^-[]$ ]];then
+#             log_info "It is a flag"
+
+#             # Split if multiple flags
+
+#             # if one flag, check if value required
+#             ## >> split by two
+
+#             # else
+#             #     arg_idx=$((arg_idx + 1));
+#         fi
+#         arg_idx=$((arg_idx + increment));
+#         # shift 1;
+#     done
+
+#     # i=1;
+#     # for arg in $args
+#     # do
+#     #     echo "[${i}]${arg}";
+
+#     #     # response_json="$(jq "${response_json}" --arg value "${arg}"  '.positional += [$value]')"
+#     #     response_json=$(echo "${response_json}" | jq --arg value "${arg}"  '.positional += [$value] | .')
+#     #     log_debug "${response_json}"
+
+#     #     i=$((i + 1));
+#     #     if [[ ${arg} == -* ]];then
+
+#     #     else
+
+#     #     fi
+
+#     # done
+#     log_debug "${response_json}"
+
+#     echo "Processed json spec"
+#     echo "${json_spec}"
+# }
+
+# function targs () {
+#     spec='{
+#         "flags": {
+#             "toto": {
+#                 "short": "t",
+#                 "valueRequired": false,
+#                 "allowMulti": false
+#             }
+#         },
+#         "positional": []
+#     }'
+#     read_args "${spec}" "$@"
+# }

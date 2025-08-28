@@ -1,4 +1,30 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# Logging utility
+#
+# Usage:
+#   log [--verbose | --debug | --info | --success | --warning | --error] MESSAGE
+#   log -h | --help
+#   log -V | --version
+#
+# Arguments:
+#   MESSAGE       message to log
+#
+# Options:
+#   -h, --help      print help
+#   -V, --version   print version
+#   -v, --verbose   log verbose
+#   -d, --debug     log debug
+#   -i, --info      log info
+#   -s, --success   log success
+#   -w, --warning   log warning
+#   -e, --error     log error
+#
+# Examples:
+#   rock.sh toto "super titi"
+#
+# ----
+# log 0.1.0
 
 ############################
 # Print Messages
@@ -42,7 +68,7 @@ _build_log_message_printf_format () {
 
     local format_idx="${DOTFILES_SETTINGS_LOG_LEVELS[${log_level}]}"
 
-    
+
 
     # shellcheck disable=SC2028
     echo "${DOTFILES_SETTINGS_FORMAT_COLORS[${format_idx}]}%s${DOTFILES_SETTINGS_FORMAT_COLORS["reset"]}\n"

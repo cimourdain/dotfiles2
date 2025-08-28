@@ -91,26 +91,39 @@ eval "$(starship init bash)"
 
 # source subfiles
 current_dir=$(dirname $(realpath ${HOME}/.bashrc))
+repo_root_dir=$(dirname $current_dir)
+
+# Bash utils path
+
+bash_utils_dir="${repo_root_dir}/bash_utils"
+# . "${bash_utils_dir}/logging"
+# . "${bash_utils_dir}/script"
+# . "${bash_utils_dir}/permissions"
+# . "${bash_utils_dir}/systemctl"
+
+# cmd_available "docopts"
+# try $? "docopts command is not available"
+# source /usr/local/bin/docopts.sh
+
 ## Script shared bash functions
-source "${current_dir}/utils/logging"
-source "${current_dir}/utils/script"
-source "${current_dir}/utils/permissions"
-source "${current_dir}/utils/systemctl"
 
 ## Tools
 source "${current_dir}/tools/ssh"
 source "${current_dir}/tools/git"
 source "${current_dir}/cloud_providers/gcloud"
 source "${current_dir}/cloud_providers/aws"
+
 # source "${current_dir}/tools/kubectl"
 source "${current_dir}/tools/cloudflare"
 source "${current_dir}/tools/dns"
 source "${current_dir}/tools/docker"
+source "${current_dir}/tools/lvim/init"
 source "${current_dir}/tools/n"
 source "${current_dir}/tools/nordvpn"
 source "${current_dir}/tools/nvm"
 source "${current_dir}/tools/pnpm"
 source "${current_dir}/tools/waydroid"
+source "${current_dir}/tools/themes"
 # source "${current_dir}/dotnet"
 # source "${current_dir}/lang/golang"
 source "${current_dir}/lang/terraform"
@@ -123,4 +136,6 @@ source "${current_dir}/projects/wlac"
 # INTEL drivers
 # export LIBVA_DRIVER_NAME=iHD
 # export LIBVA_DRIVERS_PATH=/usr/lib/dri
-. "$HOME/.cargo/env"
+
+export PATH="${repo_root_dir}/commands:$PATH"
+

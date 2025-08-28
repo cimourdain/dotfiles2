@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# yay -S plymouth cantarell-fonts ttf-dejavu
+
+# sudo vim /etc/default/grub
+# + GRUB_CMDLINE_LINUX_DEFAULT="... quiet splash"
+# sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+# sudo vim /etc/mkinitcpio.conf
+# HOOKS=(... plymouth crypt ...)
+# sudo mkinitcpio -P
+
+# themes
+# add themes from https://github.com/adi1090x/plymouth-themes
+
+function test_plymouth_theme {
+    check_root
+
+    # duration in seconds, default is 10s
+    duration=$1
+
+    if [ $# -ne 1 ]; then
+        duration=10
+    fi
+
+    plymouthd; plymouth --show-splash ; for ((I=0; I<$duration; I++)); do plymouth --update=test$I ; sleep 1; done; plymouth quit
+}
+
+
+function set_plymouth_theme {
+
+    local theme_name=${1:-"fade-in"}
+
+    mapfile -t available_themes < <( sudo plymouth-set-default-theme -l )
+
+    if [[ ${available_themes[@]} =~ $theme_name ]]
+    then
+        echo >&2 "sudo plymouth-set-default-theme -R "${theme_name}""
+    else
+        echo >&2 "💥 Theme ${theme_name} not in list of available themes:  \n${available_themes[@]}"
+    fi
+}

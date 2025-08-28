@@ -7,7 +7,11 @@
 # $ warp-cli teams-enroll aviv-group
 
 current_dir=$(dirname $(realpath ${HOME}/.bashrc))
+repo_root_dir=$(dirname $current_dir)
+
 source "${current_dir}/tools/dns"
+source "${repo_root_dir}/bash_utils/systemctl"
+
 
 # Start cloudFlare
 CLOUDFLARE_SERVICE_NAME=warp-svc
@@ -114,6 +118,11 @@ cfs() {
 
     echo >&2 "🔀 Use Cloudflare DNS"
     set_dns "cloudflare"
+
+    echo >&2 "🔀 Flush DNS Cache"
+    sudo resolvectl flush-caches
+    # echo >&2 "🔀 Use Google DNS"
+    # set_dns "google"
 }
 
 cfk() {
@@ -123,5 +132,5 @@ cfk() {
     echo >&2 "🔀 Reset DNS to default"
     set_dns
 
-    update_docker_configuration "${DEFAULT_DOCKER_DAEMON_JSON}"
+    # update_docker_configuration "${DEFAULT_DOCKER_DAEMON_JSON}"
 }

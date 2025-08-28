@@ -144,7 +144,9 @@
 "editor.minimap.enabled": false,
 "markdown-preview-enhanced.previewTheme": "github-dark.css",
 "markdown-preview-enhanced.codeBlockTheme": "auto.css",
+"makefile.configureOnOpen": true,
 "[dockerfile]": {
   "editor.defaultFormatter": "ms-azuretools.vscode-docker"
 }
+
 }

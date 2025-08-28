@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+# Dotfiles utility
+#
+# Usage:
+#   gg -h
+#   gg -V
+#   gg [--] log [<argv>...]
+#   gg [--] dns [<argv>...]
+#
+# Arguments:
+#   log     print log
+#
+# Options:
+#   -h, --help      print help
+#   -V, --version   print version
+#
+# Examples:
+#   gg log "message"
+# ----
+# gg 0.1.0
+
+
+########
+# Force insert "--" to prevent interpretation of subcommand options/args related to this command.
+########
+args="$@"
+# echo >&2 "Args ${args[@]}"
+# echo >&2 "Args count $#"
+if [ "$#" -gt 1 ] || { [[ "$#" -eq 1 ]] && [[ ! "${1}" == -*  ]] };then
+    # echo >&2 "force insert --"
+    args=("--" "${@:1}")
+fi
+# echo >&2 "original args: $@"
+# echo >&2 "updated args: ${args[@]}"
+
+########
+# Read & parse arguments with docopts
+########
+source "docopts.sh" --auto "${args[@]}"
+
+# DEBUG: Print args parsed by docopts
+# echo "---------------- Print args"
+# echo "---- With docopt_print"
+# docopt_print_ARGS
+# echo "---- Manually"
+# for key in "${!ARGS[@]}"; do
+#     echo "\"$key\" => ${ARGS[${key}]}"
+# done
+
+########
+# Forward arguments to the appropriate command
+########
+# Fetch the directory of the current script
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+# Ignore -- argument
+shift 1
+
+# Forward args to subcommand
+if [[ "${ARGS[log]}" == true ]];then
+    # echo >&2 "call log sub command with ${argv[@]}"
+    "${SCRIPT_DIR}/utils/log" "$@"
+
+elif [[ "${ARGS[dns]}" == true ]];then
+    echo >&2 "call dns sub command with ${argv[@]}"
+    "${SCRIPT_DIR}/utils/dns" "$@"
+else
+    "${SCRIPT_DIR}/utils/log" -l ERROR "Unknown command: ${ARGS["COMMAND"]}"
+fi

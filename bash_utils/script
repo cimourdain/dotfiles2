@@ -1,0 +1,25 @@
+#!/bin/bash
+
+die() {
+    log "$*" "error"
+    # Exit script
+    kill -INT $$
+}
+
+try() {
+    local cmd_response
+    cmd_response=${1:-1}
+
+    # log "Try received response code ${cmd_response}"
+    # log "${cmd_response} is a valid response code? $(test "${cmd_response}" -eq 0)"
+
+    test ${cmd_response} -eq 0 || die "${@:2} (response code ${cmd_response})"
+
+    # [ ${cmd_response} -eq 0 ]; die "Operation not permitted: $* (response code ${cmd_response})"
+}
+
+cmd_available() {
+    command -V "${1}" >/dev/null 2>&1
+    cmd_response_code=$?
+    return ${cmd_response_code}
+}

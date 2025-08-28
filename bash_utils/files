@@ -1,0 +1,52 @@
+#!/bin/bash
+
+
+function string_is_in_file {
+    local str=${1}
+    local filepath=${2}
+
+    echo >&2 "👓 check that '${str}' is in ${filepath}"
+    if grep -Fxq "$str" ${filepath}
+    then
+        echo >&2 "✅ ${str} is in ${filepath}"
+        return 0
+    else
+        return 1
+    fi
+}
+
+
+function upsert_symlink {
+    local symlink_path=${1}
+    local symlink_target=${2}
+    local backup_ext=".back"
+
+    local ln_options="-s"
+    if [ -d "${symlink_target}" ];then
+        echo "# Create folder (if not exists): ${symlink_path}"
+        mkdir -p ${symlink_path}
+
+        echo "# set ln cmd options to manage folder symlinks"
+        ln_options="${ln_options}n"
+
+        echo "# Backup extension is -back (rather than ${backup_ext})"
+        backup_ext="-back"
+    fi
+
+    if [ -d ${symlink_path} ] || [ -f ${symlink_path} ] && [ ! -L "${symlink_path}" ];then
+        echo "Existing path $symlink_path is not a symlink, backup it to ${symlink_path}${backup_ext}"
+        mv "$symlink_path" "${symlink_path}${backup_ext}"
+    fi
+
+    if [ -L "${symlink_path}" ]; then
+        if [ "$(readlink -f ${symlink_path})" != "$symlink_target" ];then
+            echo "Update existing symlink ${symlink_path} => ${symlink_target}"
+            ln ${ln_options}f "${symlink_target}" "${symlink_path}"
+        fi
+        echo "Symlink ${symlink_path} => ${symlink_target} is valid"
+        return
+    fi
+
+    echo "Create new symlink ${symlink_path} => ${symlink_target} "
+    ln ${ln_options} "${symlink_target}" "${symlink_path}"
+}

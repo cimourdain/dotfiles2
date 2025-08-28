@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Program description
+#
+# Usage:
+#   rock [-abc] [--optionVal=N] REQUIRED_ARG [OPTIONAL_ARG]
+#   rock new <argv>...
+#   rock -h | --help
+#   rock -V | --version
+#
+# Arguments:
+#   REQUIRED_ARG       mandatory value
+#   OPTIONAL_ARG       optional argument
+#   argv               0 or more extra arguments
+#
+# Options:
+#   -h, --help      print help
+#   -V, --version   print version
+#   -a, --flagA     enable flag A
+#   -b, --flagB     enable flag B
+#   -c, --flagC     enable flag C
+#   -o N --optionVal=N   Option with a value [default: 10]
+#
+# Examples:
+#   rock.sh toto "super titi"
+#
+# ----
+# rock 0.1.0
+
+# source docopts
+source "docopts.sh" --auto "$@"
+
+# help=$(docopt_get_help_string $0)
+# version="0.0.1"
+# echo "---------------- Build prgm arg spec"
+# parsed=$(docopts -A ARGS -h "$help" -V $version : "$@") # || echo "Failed to read arguments: \n ${help}";kill -INT $$
+# echo "---------------- Eval args"
+# eval "$parsed" || echo "Response code: $?"
+
+# || echo "Failed to read arguments: \n ${help}";kill -INT $$
+echo "---------------- Print args"
+echo "---- With docopt_print"
+docopt_print_ARGS
+
+echo "---- Manually"
+for key in "${!ARGS[@]}"; do
+    echo "$key => ${ARGS[${key}]}"
+done
+
+###### Program execution
+echo "---------------- Prgm execution"

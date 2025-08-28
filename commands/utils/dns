@@ -1,4 +1,32 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# DNS Management
+#
+# Usage:
+#   dns set [PROVIDER]  Set DNS provider for all connections
+#   dns reset           Reset DNS setup to default
+#
+# Arguments:
+#   PROVIDER     DNS provider to use (choose from cloudflare, google, quad9, openDNS, ControlD) [default: google]
+#
+# Options:
+#   -h, --help      print help
+#   -V, --version   print version
+#
+# Examples:
+#   dns set cloudflare
+#   dns set quad9
+#   dns reset
+#
+# ----
+# DNS 0.1.0
+
+
+
+# Read & parse arguments with docopts
+# echo >&2 "received args by DNS command: $@ ($#)"
+source "docopts.sh" --auto "$@"
+
 
 function update_connexion_dns_config {
     local connection_name="${1}"
@@ -66,3 +94,12 @@ function reset_dns {
         nmcli con up "${connection}"
     done
 }
+
+
+if [[ "${ARGS[set]}" == true ]];then
+    gg log --level INFO "Set DNS to ${ARGS[PROVIDER]}"
+    set_dns "${ARGS[PROVIDER]}"
+elif [[ "${ARGS[reset]}" == true ]]
+    gg log --level INFO "Reset DNS to default"
+    reset_dns
+fi

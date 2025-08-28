@@ -3,6 +3,8 @@
 # source .env folder
 set -a; source .env; set +a
 
+# source "./scripts/utils/symlinks"
+
 
 ################
 # GPG
@@ -59,6 +61,25 @@ function restore_ssh {
 ################
 # Bashrc
 ################
+function install_docops {
+    local dl_dir=".vendors/docopts"
+    mkdir "${dl_dir}"
+    cd "${dl_dir}"
+
+    required_files=("get_docopts.sh" "docopts.sh" "VERSION")
+    for filename in $required_files
+    do
+        curl 'https://raw.githubusercontent.com/docopt/docopts/refs/heads/master/${filename}' > ${filename}
+    done
+
+    sudo chmod +x get_docopts.sh
+    ./get_docopts.sh
+
+    sudo cp docopts docopts.sh /usr/local/bin
+
+    cd -
+}
+
 function restore_bashrc {
 
     if [[ ! -L "$HOME/.bashrc" ]]; then
@@ -72,24 +93,27 @@ function restore_bashrc {
     ln -s ${PWD}/bashrc/.bashrc ${HOME}
 }
 
-# function _fix_symlink(){
-#     local path=${1}
-#     local filename=${2}
-#     local target=${3}
 
-#     ls -a "${target}" | grep "${filename}"
-#     if [[ ! -L "${path}/${filename}" || ! $(readlink -f "${path}/${filename}")=${target} ]];
-#     then
-#         if [[ -f "${target}/${filename}" ]];then
-#             echo "backup existing file in ${target}/${filename}"
-#             # rm "${target}/${filename}"
-#         else
-#             echo "${target}/${filename} do not exist"
-#         fi
-#         echo "create symlink to ${path}/${filename} in ${target}"
-#         # ln -s "${path}/${filename}" "$target"
-#     fi
-# }
+################
+# Nvim
+################
+function setup_nvim {
+    local symlink_path="$HOME/.config/nvim"
+    local symlink_target="${PWD}/bashrc/tools/nvim"
+
+    upsert_symlink "${symlink_path}" "${symlink_target}"
+}
+
+function setup_lvim {
+    setup_nvim
+
+    local symlink_path="$HOME/.config/lvim"
+    local symlink_target="${PWD}/bashrc/tools/lvim"
+
+    upsert_symlink "${symlink_path}" "${symlink_target}"
+}
+
+
 
 # function restore_crons {
 #     JOURNALCTL_CRON_FILES_PATH="${PWD}/journalctl_crons"
@@ -103,71 +127,18 @@ function restore_bashrc {
 ################
 # VsCode
 ################
-function createSymlink {
-    local target_folder=$1
-    local target_filename=$2
-    local source_filepath=$3
-
-    local target_path="${target_folder}/${target_filename}"
-
-    echo "# Create folder (if not exists): ${target_folder}"
-    mkdir -p ${target_folder}
-
-    if [[ -f "${target_path}" ]]; then
-        echo "${target_path} already exists"
-
-        if [[ ! -L "${target_path}" ]]; then
-            echo "Save current ${target_path} to ${target_path}.back"
-            mv "${target_path}" "${target_path}.back"
-        else
-            echo "Remove existing symlink: ${target_path}"
-            rm "${target_path}"
-        fi
-    fi
-
-    echo "# Create symlink: ${source_filepath} > ${target_path}"
-    ln -s ${source_filepath} ${target_folder}/
-}
-
 function restore_vscode {
     echo "# Create symlink to dotfiles settings"
     local vscode_settings_folder="$HOME/.config/Code/User"
     local vscode_settings_filename="settings.json"
     local vscode_settings_source="${PWD}/vscode/${vscode_settings_filename}"
-    createSymlink ${vscode_settings_folder} ${vscode_settings_filename} ${vscode_settings_source}
+    upsert_symlink "${vscode_settings_folder}/${vscode_settings_filename}" "${vscode_settings_source}"
 
     echo "# Create symlink to dotfiles extensions"
     local vscode_extensions_folder="${vscode_settings_folder}/extensions"
     local vscode_extensions_filename="extensions.json"
     local vscode_extensions_source="${PWD}/vscode/${vscode_extensions_filename}"
-    createSymlink ${vscode_extensions_folder} ${vscode_extensions_filename} ${vscode_extensions_source}
-
-    # mkdir -p ${VSCODE_SETTINGS_FOLDER}
-    # if [[ ! -L "${VSCODE_SETTINGS_FILE}" ]]; then
-    #     echo "Save current ${VSCODE_SETTINGS_FILE} to ${VSCODE_SETTINGS_FILE}.back"
-    #     mv "${VSCODE_SETTINGS_FILE}" "${VSCODE_SETTINGS_FILE}.back"
-    # else
-    #     echo "Remove existing symlink"
-    #     rm "${VSCODE_SETTINGS_FILE}"
-    # fi
-
-    # echo("# Create symlink to dotfiles extensions")
-    # echo "create ${VSCODE_SETTINGS_FILE} symlink"
-    # ln -s ${PWD}/vscode/settings.json ${VSCODE_SETTINGS_FOLDER}/
-
-    # VSCODE_EXT_FOLDER=$HOME/.config/Code/User/extensions
-    # VSCODE_EXT_FILE=${VSCODE_EXT_FOLDER}/extensions.json
-    # mkdir -p ${VSCODE_EXT_FOLDER}
-    # if [[ ! -L "${VSCODE_EXT_FILE}" ]]; then
-    #     echo "Save current ${VSCODE_EXT_FILE} to ${VSCODE_EXT_FILE}.back"
-    #     mv "${VSCODE_EXT_FILE}" "${VSCODE_EXT_FILE}.back"
-    # else
-    #     echo "Remove existing symlink"
-    #     rm "${VSCODE_EXT_FILE}"
-    # fi
-
-    # echo "create "${VSCODE_EXT_FILE}" symlink"
-    # ln -s ${PWD}/vscode/extensions.json ${VSCODE_EXT_FOLDER}/
+    upsert_symlink "${vscode_extensions_folder}/${vscode_extensions_filename}" "${vscode_extensions_source}"
 }
 
 
@@ -175,29 +146,13 @@ function restore_vscode {
 # GIT Config
 ################
 function restore_git {
-    if [[ -f ${HOME}/.gitignore_global ]];then
-        echo "backup existing gitignore_global"
-        mv ${HOME}/.gitignore_global ${HOME}/.gitignore_global.bak
-        elif [[ -L ${HOME}/.gitignore_global ]];then
-        echo  "delete existing gitignore_global symbolic link"
-        rm ${HOME}/.gitignore_global
-    else
-        echo "no existing file ${HOME}/.gitignore_global"
-    fi
+    local gitignore_global_system_path="${HOME}/.gitignore_global"
+    local gitignore_global_symlink_target="${PWD}/gitfiles/.gitignore_global"
 
-    if [[ -f ${HOME}/.gitconfig ]];then
-        echo "backup existing gitconfig"
-        mv ${HOME}/.gitconfig ${HOME}/.gitconfig.bak
-        elif [[ -L ${HOME}/.gitconfig ]];then
-        echo  "delete existing gitconfig symbolic link"
-        rm ${HOME}/.gitconfig
-    else
-        echo "no existing file ${HOME}/.gitconfig"
-    fi
-
-    echo "create new symlinks to current dotfiles"
-    ln -s ${PWD}/gitfiles/.gitignore_global ${HOME}
-    ln -s ${PWD}/gitfiles/.gitconfig ${HOME}
+    local git_files=(".gitignore_global" ".gitconfig")
+    for git_file in ${git_files[@]}; do
+        upsert_symlink "${HOME}/${git_file}" "${PWD}/gitfiles/${git_file}"
+    done
 }
 
 ################
